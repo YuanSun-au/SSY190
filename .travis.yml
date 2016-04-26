@@ -6,8 +6,8 @@ language: c
 #  - docker pull bitcraze/builder
 script:
   # Build CF2 basic
-  chmod +x ./Crazyflie_Firmware/tools/build/*
- ./Crazyflie_Firmware/tools/build/build PLATFORM=CF2
+  chmod +x ./Crazyflie_Firmware/tools/build/* ;
+ ./Crazyflie_Firmware/tools/build/build PLATFORM=CF2 ;
 
   # Build CF2 with "all" features enabled
 #  - docker run --rm -v ${PWD}:/module bitcraze/builder ./Crazyflie_Firmware/tools/build/build clean
