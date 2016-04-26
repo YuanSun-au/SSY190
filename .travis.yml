@@ -1,7 +1,7 @@
 sudo: required
 language: c
-#services:
-#  - docker
+services:
+  - rake
 #before_install:
 #  - docker pull bitcraze/builder
 script:
