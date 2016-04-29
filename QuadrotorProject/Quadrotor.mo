@@ -24,16 +24,12 @@ model Quadrotor
 
   parameter Real b=1e-3,k=1e-3;
   parameter Real d = L;
-  parameter Real A[4,4] = [-b, -b, -b, -b;
-                  0, -d*b, 0, d*b;
-                  d*b, 0, -d*b, 0;
-                  k, -k, k, -k];
+  parameter Real A[4,4] = [1, 1, 1, 1;
+                  0, -d, 0, d;
+                  d, 0, -d, 0;
+                  k/b, -k/b, k/b, -k/b];
   Real omega[3,1]; // omeaga as in angular velocity
   Real Tx,Ty,Tz;
-  Real w1 = ctrl[1]; // Rotor speed,already squared
-  Real w2 = ctrl[2];
-  Real w3 = ctrl[3];
-  Real w4 = ctrl[4];
   parameter Real J[3,3]=[Ix,0,0; 0,Iy,0; 0,0,Iz];
 equation
   // ADD YOUR EQUATION BELOW
@@ -53,7 +49,7 @@ equation
 
   m*der(v)=[0;0;m*g] - R*[0;0;T]; // Newton equation
 
-  [T;Tx;Ty;Tz] = A*[w1; w2; w3; w4];
+  [T;Tx;Ty;Tz] = A*[ctrl[1];ctrl[2];ctrl[3];ctrl[4]];
 
 
   omega=[1,0,-sin(pitch); 0,cos(roll),cos(pitch)*sin(roll); 0, -sin(roll),cos(pitch)*cos(roll)] * [der(roll);der(pitch);der(yaw)];
