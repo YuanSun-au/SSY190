@@ -28,16 +28,15 @@
 % Create system
 u_eq=9.81*0.027/4 * [1,1,1,1]; % u_eq = g*m/4
 x = Simulink.BlockDiagram.getInitialState('nonlinearQuad');
-%[A,B,C,D]=linmod('nonlinearQuad',x,u_eq);
-[A,B,C,D]=linmod('nonlinearQuad',x,u_eq)
-sys=ss(A,B,C,D);    %creates continous state space system
+sys=linmod('nonlinearQuad',x);
+sys=ss(sys.a,sys.b,sys.c,sys.d);    %creates continous state space system
 
 %% Controller design
 % Select parameters
 Q=eye(12);
-  Q(9)=100;
-  Q(12)=10;
-R=eye(4)/10;
+%  Q(9)=100;
+%  Q(12)=10;
+R=eye(4)*10;
 K = lqr(sys,Q,R); % K is the feedback vector
 
 % Test on linear plant
