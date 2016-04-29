@@ -21,7 +21,7 @@ model Quadrotor
 
   parameter Real b=1e-3,k=1e-3;
   parameter Real d = L;
-  parameter Real A[4,4] = [1, 1, 1, 1;
+  parameter Real A[4,4] = [-1, -1, -1, -1;
                   0, -d, 0, d;
                   d, 0, -d, 0;
                   k/b, -k/b, k/b, -k/b];
