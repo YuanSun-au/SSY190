@@ -51,7 +51,7 @@ equation
   //v=[der(x);der(y);der(z)]; // Speed vector
   //v=[v1;v2;v3];
 
-  m*der(v)=[0;0;m*g] + R*[0;0;T]; // Newton equation
+  m*der(v)=[0;0;m*g] - R*[0;0;T]; // Newton equation
 
   [T;Tx;Ty;Tz] = A*[w1; w2; w3; w4];
 
