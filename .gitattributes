@@ -15,3 +15,16 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Matlab
+*.slx -crlf -diff -merge
+*.mdl -crlf -diff -merge
+*.mat -crlf -diff -merge
+*.mlx -crlf -diff -merge
+
+# Docs and imgs
+*.xlsx -crlf -diff -merge
+*.docx -crlf -diff -merge
+*.pdf -crlf -diff -merge
+*.jpg -crlf -diff -merge
+*.png -crlf -diff -merge
