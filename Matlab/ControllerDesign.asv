@@ -6,7 +6,7 @@
 % Ix,Iy,Iz;
 % J=diag(Ix,Iy,Iz); %Inertia matrix
 % b,d,k,l,m,g; % other params
-% 
+g=9.81; 
 % 
 % % States needed (all [3])
 % xyz;  % pos in global [x,y,z] frame
@@ -24,19 +24,30 @@
               
 % Equations
 
+A=zeros(12);
+A(1:3,4:6)=eye(3);
+A(5,8)=-g;
+A(7:9,10:12
 
+
+
+
+
+
+%%
 % Create system
 u_eq=9.81*0.027/4 * [1,1,1,1]; % u_eq = g*m/4
 x = Simulink.BlockDiagram.getInitialState('nonlinearQuad');
-sys=linmod('nonlinearQuad',x);
-sys=ss(sys.a,sys.b,sys.c,sys.d);    %creates continous state space system
+%[A,B,C,D]=linmod('nonlinearQuad',x,u_eq);
+[A,B,C,D]=linmod('nonlinearQuad',x,u_eq)
+sys=ss(A,B,C,D);    %creates continous state space system
 
 %% Controller design
 % Select parameters
 Q=eye(12);
-%  Q(9)=100;
-%  Q(12)=10;
-R=eye(4)*10;
+  Q(9)=100;
+  Q(12)=10;
+R=eye(4)/10;
 K = lqr(sys,Q,R); % K is the feedback vector
 
 % Test on linear plant
