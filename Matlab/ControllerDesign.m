@@ -33,15 +33,15 @@ Iz = 2.173e-5;
 
 A=zeros(12);
 A(1:3,4:6)=eye(3);
-A(5,8)=-g; % -Te/m
-%A(7:9,10:12)=[1,0.5,0.5; 0,0.5,-0.5;0,0.5,0.5];
-A(7,10)=1;
-
+A(7,2)=-g;
+A(8,1)=g;
+A(10:12,7:9)=eye(3);
 
 B=zeros(12,4);
-B(6,1:4)=-1/m;
-%B(6,5)=g;
-B(10:12,1:4)=[0 -d/Ix 0 d/Ix; d/Iy 0 -d/Iy 0; k/(Iz*m) -k/(Iz*m) k/(Iz*m) -k/(Iz*m)];
+B(4,2)=1/Ix;
+B(5,3)=1/Iy;
+B(6,4)=1/Iz;
+B(9,1)=1/m;
 
 C=eye(12);
 
@@ -60,12 +60,8 @@ sys=ss(A,B,C,D);    %creates continous state space system
 %% Controller design
 % Select parameters
 Q=eye(12);
-  Q(9)=100;
-  Q(12)=10;
-R=eye(4)/1000;
-N=zeros(12,4);
-N(6,1)=1;
-K = lqr(sys,Q,R,N) % K is the feedback vector
+R=eye(4)/10;
+K = lqr(sys,Q,R) % K is the feedback vector
 
 
 % Test on linear plant
