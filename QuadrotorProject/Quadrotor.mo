@@ -13,21 +13,21 @@ model Quadrotor
   RealOutput plantOut[nOut] "Connector of Real plant outputs as output" annotation(Placement(transformation(extent = {{100, -10}, {120, 10}}, rotation = 0)));
   // Quadrotor components
   Real roll,pitch,yaw; // Rotation states
-  Real rpy[3,1]=[roll;pitch;yaw];
+  Real p,q,r; // Angular velocity
 
-  Real v1,v2,v3;
-  Real v[3,1]=[v1;v2;v3];
+  Real x,y,z; //linear pos
+  Real u,v,w; //linear speed
+
+
+//Rotation matrix
   Real R[3,3]; //R=Rx(roll)*Ry(pitch)*Rz(yaw);
+  Real T[3,3];
 
-  parameter Real b=1e-3,k=1e-3;
-  parameter Real d = L;
-  parameter Real A[4,4] = [-1, -1, -1, -1;
-                  0, -d, 0, d;
-                  d, 0, -d, 0;
-                  k/b, -k/b, k/b, -k/b];
-  Real omega[3,1]; // omeaga as in angular velocity
-  Real T,Tx,Ty,Tz;
-  parameter Real J[3,3]=[Ix,0,0; 0,Iy,0; 0,0,Iz];
+// Control signals
+  Real ft = ctrl[1];
+  Real Tx = ctrl[2];
+  Real Ty = ctrl[3];
+  Real Tz = ctrl[4];
 equation
   // ADD YOUR EQUATION BELOW
 // Rotation matrix zyz euler
@@ -35,19 +35,27 @@ equation
      cos(pitch)*cos(yaw)*sin(roll)+cos(roll)*sin(yaw), cos(roll)*cos(pitch)*cos(yaw)-sin(roll)*sin(yaw), -cos(yaw)*sin(pitch);
      sin(roll)*sin(pitch), cos(roll)*sin(pitch), cos(pitch) ];
 
+  [der(x);der(y);der(z)]=R*[u;v;w];
 
-  m*der(v)=[0;0;m*g] - R*[0;0;T]; // Newton equation
-  [T;Tx;Ty;Tz] = A*[ctrl[1];ctrl[2];ctrl[3];ctrl[4]];
 
-  omega=[1,0,-sin(pitch); 0,cos(roll),cos(pitch)*sin(roll); 0, -sin(roll),cos(pitch)*cos(roll)] * [der(roll);der(pitch);der(yaw)];
-  J*der(omega) = [Tx; Ty; Tz] - [(Iy-Iz)*omega[2]*omega[3]; (Iz-Ix)*omega[1]*omega[3]; (Ix-Iy)*omega[1]*omega[2]];
+  // Rotation of angular velocity
+  T=[1,sin(roll)*tan(pitch),cos(roll)*tan(pitch);
+   0,cos(roll),-sin(roll);
+    0, sin(roll)/cos(pitch),cos(roll)/cos(pitch)];
 
-  // SORT OUT THE PLANT OUTPUT HERE
-  // control input = force applied vertically by the rotors
-  // plant output = {altitude, vertical speed}
+  [der(roll); der(pitch); der(yaw)] = T*[p;q;r];
 
-  plantOut={v1,v2,v3};
-  //
+  // Dynamic equations
+ -m*g*sin(pitch) = m*(der(u) + q*w - r*v);
+ m*g*cos(pitch)*sin(roll) = m*(der(v) - p*w + r*u);
+ m*g*cos(pitch)*cos(roll) -ft = m*(der(w) + p*v -q*u);
+ Tx = der(p)*Ix - q*r*Iy + q*r*Iz;
+ Ty = der(q)*Iy + p*r*Ix  p*r*Iz;
+ Tz = der(r)*Iz - p*q*Ix + p*q*Iy;
+
+
+  // all states as output
+  plantOut={roll,pitch,yaw,p,q,r,u,v,w,x,y,z};
   //
   // NOTHING MORE TO CHANGE BELOW
   annotation(Documentation(info = "<html><h1 class=\"heading\">QUADROTOR BLOCK</h1><p></p><p>Implement your own plant model equation and update the force and torque that affects the Body of the quadrotor.</p></html>"));
