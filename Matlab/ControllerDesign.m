@@ -59,9 +59,21 @@ sys=ss(A,B,C,D);    %creates continous state space system
 
 %% Controller design
 % Select parameters
-Q=eye(12);
+Q=eye(12)*100;
+Q(10,10)=1;
+Q(11,11)=1;
+Q(end)=1;
 R=eye(4)/10;
-K = lqr(sys,Q,R) % K is the feedback vector
+K = lqr(sys,Q,R); % K is the feedback vector
 
 
 % Test on linear plant
+
+%% pretty outputs
+for n=1:length(K(:,1))
+    fprintf('%14.5f',K(n,1));
+    for i=K(n,2:end)
+        fprintf(',%14.5f',i);
+    end
+    fprintf(';\n')
+end
