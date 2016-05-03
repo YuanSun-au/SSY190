@@ -31,9 +31,9 @@ model Quadrotor
 equation
   // ADD YOUR EQUATION BELOW
 // Rotation matrix zyz euler
-  R=[cos(roll)*cos(yaw)-cos(pitch)*sin(roll)*sin(yaw), -cos(yaw)*sin(roll)-cos(roll)*cos(pitch)*sin(yaw), sin(pitch)*sin(yaw);
-     cos(pitch)*cos(yaw)*sin(roll)+cos(roll)*sin(yaw), cos(roll)*cos(pitch)*cos(yaw)-sin(roll)*sin(yaw), -cos(yaw)*sin(pitch);
-     sin(roll)*sin(pitch), cos(roll)*sin(pitch), cos(pitch) ];
+  R=[cos(pitch)*cos(yaw), sin(roll)*sin(pitch)*cos(yaw) -cos(roll)*sin(yaw), cos(roll)*sin(pitch)*cos(yaw)+ sin(roll)*sin(pitch);
+     cos(pitch)*sin(yaw), sin(roll)*sin(pitch)*sin(yaw) + cos(roll)*cos(pitch), cos(roll)*sin(pitch)*sin(yaw)-sin(roll)*cos(yaw);
+     -sin(pitch), sin(roll)*cos(pitch), cos(roll)*cos(pitch) ];
 
   [der(x);der(y);der(z)]=R*[u;v;w];
 
@@ -50,7 +50,7 @@ equation
  m*g*cos(pitch)*sin(roll) = m*(der(v) - p*w + r*u);
  m*g*cos(pitch)*cos(roll) -ft = m*(der(w) + p*v -q*u);
  Tx = der(p)*Ix - q*r*Iy + q*r*Iz;
- Ty = der(q)*Iy + p*r*Ix  p*r*Iz;
+ Ty = der(q)*Iy + p*r*Ix - p*r*Iz;
  Tz = der(r)*Iz - p*q*Ix + p*q*Iy;
 
 
