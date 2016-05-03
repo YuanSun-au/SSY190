@@ -18,8 +18,10 @@ equation
   ref[7]=0;
   ref[8]=0;
   ref[9]=0;
-  ref[10]=0;
+  //ref[10]=1;
+  der(ref[10]) = 1 - ref[10];
   ref[11]=0;
   ref[12]=0;
+  //der(ref[12]) = 1 - ref[12];
   annotation(Documentation(info = "<html><h1 class=\"heading\">REFERENCE VALUE GENERATION</h1><p>Use this block to generate the reference values for the system.</p></html>"));
 end RefValues;
