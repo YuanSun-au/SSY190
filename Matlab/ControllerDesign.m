@@ -48,7 +48,10 @@ C=eye(12);
 sys=ss(A,B,C,0);
 
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 %% Controller design
 % Select parameters
 Q=eye(12)*100;
@@ -58,6 +61,26 @@ Q(end)=1;
 R=eye(4)/10;
 K = lqr(sys,Q,R); % K is the feedback vector
 
+%% Kalman design
+A=zeros(12);
+A(1:3,4:6)=eye(3);
+A(7,2)=-g;
+A(8,1)=g;
+A(10:12,7:9)=eye(3);
+
+B=zeros(12,4);
+B(4,2)=1/Ix;
+B(5,3)=1/Iy;
+B(6,4)=1/Iz;
+B(9,1)=1/m;
+
+C=eye(12);
+
+sys=ss(A,B,C,0);
+
+Qk=1/100;
+Rk=10;
+[EST, G, X] = kalman (sys, Qk, Rk)
 
 % Test on linear plant
 
