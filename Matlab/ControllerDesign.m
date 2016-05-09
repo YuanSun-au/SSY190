@@ -48,10 +48,6 @@ C=eye(12);
 sys=ss(A,B,C,0);
 
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 %% Controller design
 % Select parameters
 Q=eye(12)*100;
@@ -75,12 +71,18 @@ B(6,4)=1/Iz;
 B(9,1)=1/m;
 
 C=eye(12);
+% Values in the quad: 
+% roll,pitch,yaw - from sensor fusion (euler deg)
+% p,q,r - from gyro (deg/s)
+% accelerometer data axis (mG)
+% magnetometer axis (Tesla?)
 
 sys=ss(A,B,C,0);
+sysd=c2d(sys,0.1);
 
-Qk=1/100;
-Rk=10;
-[EST, G, X] = kalman (sys, Qk, Rk)
+Qk=eye(12);
+Rk=eye(12);
+[L, P, E] = lqe(sys, Qk, Rk)
 
 % Test on linear plant
 
