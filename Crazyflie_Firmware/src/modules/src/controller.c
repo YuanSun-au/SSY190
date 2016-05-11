@@ -26,32 +26,37 @@ void controllerInit(void)
 }
 
 
+static int toggle(int var){
+  return var?0:1;
+}
 
 static void controllerTask(void* param)
 {
   uint32_t lastWakeTime;
 
-  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR); // What is this?
+//  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR); // What is this?
 
   //Wait for the system to be fully started
   systemWaitStart();
 
   lastWakeTime = xTaskGetTickCount ();
 
+  int ledstatus = 0; // for the ledToggle
+
   while(1)
   {
-    vTaskDelayUntil(&lastWakeTime, F2T(IMU_UPDATE_FREQ)); // delay until new ref or state estimation
-
+    vTaskDelayUntil(&lastWakeTime, F2T(FREQ)); // delay until new ref or state estimation
+    xSemaphoreTake( xSemaphore ); // Take the semaphore (block all other)
     // Get error
-    e=ref-state;
+    //e=ref-state;
 
     // Calculate input (T,tx,ty,tz)
-    inputs=K*e;
+    //inputs=K*e;
 
     // Translate from (T,tx,ty,tz) to motorPowerMi
 
     //check the book at page 80
-    motorPowerM1 = limitThrust();
+    /*motorPowerM1 = limitThrust();
     motorPowerM2 = limitThrust();
     motorPowerM3 = limitThrust();
     motorPowerM4 = limitThrust();
@@ -59,6 +64,12 @@ static void controllerTask(void* param)
     motorsSetRatio(MOTOR_M1, motorPowerM1);
     motorsSetRatio(MOTOR_M1, motorPowerM1);
     motorsSetRatio(MOTOR_M1, motorPowerM1);
-    motorsSetRatio(MOTOR_M1, motorPowerM1);
+    motorsSetRatio(MOTOR_M1, motorPowerM1);*/
+
+
+    // For this week we just toggle some leds
+    ledSet(LED_GREEN_L,ledstatus)
+    ledstatus = toggle(ledstatus);
+    xSemaphoreGive(xSemaphore); // release the sem.
       }
     }
