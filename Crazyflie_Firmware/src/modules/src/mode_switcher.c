@@ -59,3 +59,7 @@ void mode_switcherInit(void)
 
   isInit = true;
 }
+bool mode_switcherTest(void)
+{
+  return true;
+}

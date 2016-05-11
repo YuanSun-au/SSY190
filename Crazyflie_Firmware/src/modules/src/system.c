@@ -210,6 +210,9 @@ void systemTask(void *arg)
   pass &= soundTest();
   pass &= memTest();
   pass &= watchdogNormalStartTest();
+  pass &= controllerTest();
+  pass &= ref_generatorTest();
+  pass &= mode_switcherTest();
 
   //Start the firmware
   if(pass)

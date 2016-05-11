@@ -9,7 +9,7 @@ OUT: motor power
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
-#include "ledseq.h"
+#include "led.h"
 
 #include "config.h"
 #include "system.h"
@@ -38,7 +38,7 @@ static void controllerTask(void* param)
   while(1)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(FREQ)); // delay until new ref or state estimation
-    xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
+    //xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
     // Get error
     //e=ref-state;
 
@@ -60,9 +60,10 @@ static void controllerTask(void* param)
 
 
     // For this week we just toggle some leds
-    ledSet(LED_GREEN_L,ledstatus);
+    ledSet(ERR_LED1,ledstatus);
+    ledSet(ERR_LED2,ledstatus);
     ledstatus = toggle(ledstatus);
-    xSemaphoreGive(xSemaphore); // release the sem.
+    //xSemaphoreGive(xSemaphore); // release the sem.
       }
     }
 
@@ -81,3 +82,7 @@ void controllerInit(void)
   isInit = true;
 }
 
+bool controllerTest(void)
+{
+  return true;
+}
