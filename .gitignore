@@ -15,3 +15,7 @@ version.c
 *.gch
 
 /generated-test/**
+
+Matlab/slprj
+Matlab/*.autosave
+Matlab/*.asv

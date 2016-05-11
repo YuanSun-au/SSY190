@@ -1,5 +1,3 @@
-within QuadrotorProject;
-
 model Quadrotor
   extends Modelica.Blocks.Icons.Block;
   //Import libraries and config
@@ -29,7 +27,11 @@ model Quadrotor
   Real Ty = ctrl[3];
   Real Tz = ctrl[4];
 equation
-  // ADD YOUR EQUATION BELOW
+// ADD YOUR EQUATION BELOW
+// Rotation matrix xyz
+//  R=[cos(pitch)*cos(yaw) , - cos(pitch)*sin(yaw) , sin(pitch) ;
+//cos(roll)*sin(yaw) + cos(yaw)*sin(roll)*sin(pitch) , cos(roll)*cos(yaw) - sin(roll)*sin(pitch)*sin(yaw) , - cos(pitch)*sin(roll) ;
+//sin(roll)*sin(yaw) - cos(roll)*cos(yaw)*sin(pitch) , cos(yaw)*sin(roll) + cos(roll)*sin(pitch)*sin(yaw) , cos(roll)*cos(pitch) ];
 // Rotation matrix zyz euler
   R=[cos(pitch)*cos(yaw), sin(roll)*sin(pitch)*cos(yaw) -cos(roll)*sin(yaw), cos(roll)*sin(pitch)*cos(yaw)+ sin(roll)*sin(pitch);
      cos(pitch)*sin(yaw), sin(roll)*sin(pitch)*sin(yaw) + cos(roll)*cos(pitch), cos(roll)*sin(pitch)*sin(yaw)-sin(roll)*cos(yaw);

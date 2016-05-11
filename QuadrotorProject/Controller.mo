@@ -1,5 +1,3 @@
-within QuadrotorProject;
-
 model Controller
   extends Modelica.Blocks.Icons.Block;
   //Import libraries and config
