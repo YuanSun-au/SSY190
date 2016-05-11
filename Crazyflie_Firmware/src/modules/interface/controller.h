@@ -32,6 +32,6 @@
 extern int FREQ;
 extern SemaphoreHandle_t xSemaphore;
 void controllerInit(void);
-
+void controllerTest(void);
 
 #endif /* controller_H_ */
