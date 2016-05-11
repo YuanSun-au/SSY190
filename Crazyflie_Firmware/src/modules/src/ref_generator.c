@@ -9,8 +9,13 @@ OUT: reference to controller
 // From FreeRTOS
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 // From Crazyflie
 #include "commander.h"
+#include "ledseq.h"
+#include "config.h"
+#include "system.h"
+#include "ref_generator.h"
 
 static bool isInit;
 
@@ -22,21 +27,6 @@ static float eulerYawActual;
 static float eulerRollDesired;
 static float eulerPitchDesired;
 static float eulerYawDesired;
-
-void ref_generatorInit(void)
-{
-  if(isInit)
-    return;
-
-  // Call dependency inits
-
-  // Create task
-  xTaskCreate(ref_generatorTask, REF_GEN_TASK_NAME,
-              REF_GEN_TASK_STACKSIZE, NULL, REF_GEN_TASK_PRI, NULL);
-
-
-  isInit = true;
-}
 
 static int toggle(int var){
   return var?0:1;
@@ -58,7 +48,7 @@ static void ref_generatorTask(void* param)
   while(1)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(FREQ)); // delay until next
-    xSemaphoreTake( xSemaphore ); // Take the semaphore (block all other)
+   xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
 
     // Get reference (from where?) (from commander)
     commanderGetRPY(&eulerRollDesired, &eulerPitchDesired, &eulerYawDesired); // sets the desired to what the user want
@@ -68,9 +58,24 @@ static void ref_generatorTask(void* param)
     // Tell controller we have a new reference (if we have? do we need to?)
 
     // For this week we just toggle some leds
-    ledSet(LED_RED_R,ledstatus)
+    ledSet(LED_RED_R,ledstatus);
     ledstatus = toggle(ledstatus);
     xSemaphoreGive(xSemaphore); // release the sem.
 
       }
     }
+
+void ref_generatorInit(void)
+{
+  if(isInit)
+    return;
+
+  // Call dependency inits
+
+  // Create task
+  xTaskCreate(ref_generatorTask, REF_GEN_TASK_NAME,
+              REF_GEN_TASK_STACKSIZE, NULL, REF_GEN_TASK_PRI, NULL);
+
+
+  isInit = true;
+}

@@ -4,24 +4,13 @@ or STOP (controller off)
 */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
+#include "config.h"
+#include "system.h"
+#include "mode_switcher.h"
 
 static bool isInit;
-
-void mode_switcherInit(void)
-{
-  if(isInit)
-    return;
-
-  // Call dependency inits
-
-  // Create task
-  xTaskCreate(mode_switcherTask, MODE_SW_TASK_NAME,
-              MODE_SW_TASK_STACKSIZE, NULL, MODE_SW_TASK_PRI, NULL);
-
-
-  isInit = true;
-  int status = 0;
-}
+static int status=0;
 
 static int toggle(int var){
   return var?0:1;
@@ -41,7 +30,7 @@ static void mode_switcherTask(void* param)
   while(1)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(0.5)); // 500Hz
-    xSemaphoreTake( xSemaphore ); // Take the semaphore (block all other)
+    xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
 
     // Get reference (from where?)
 
@@ -55,3 +44,18 @@ static void mode_switcherTask(void* param)
     xSemaphoreGive(xSemaphore); // release the sem.
       }
     }
+
+void mode_switcherInit(void)
+{
+  if(isInit)
+    return;
+
+  // Call dependency inits
+
+  // Create task
+  xTaskCreate(mode_switcherTask, MODE_SW_TASK_NAME,
+              MODE_SW_TASK_STACKSIZE, NULL, MODE_SW_TASK_PRI, NULL);
+
+
+  isInit = true;
+}

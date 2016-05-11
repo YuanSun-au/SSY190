@@ -68,7 +68,6 @@
   #define FREERTOS_MCU_CLOCK_HZ   72000000
 #endif
 
-
 // Task priorities. Higher number higher priority
 #define CONTROLLER_TASK_PRI     4
 #define MODE_SW_TASK_PRI     4

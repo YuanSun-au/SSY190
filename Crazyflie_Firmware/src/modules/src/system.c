@@ -59,6 +59,9 @@
 #include "queuemonitor.h"
 #include "buzzer.h"
 #include "sound.h"
+#include "controller.h"
+#include "ref_generator.h"
+#include "mode_switcher.h"
 
 #ifdef PLATFORM_CF1
 #include "uart.h"
@@ -181,7 +184,7 @@ void systemTask(void *arg)
 
   commInit();
   commanderInit();
-//  stabilizerInit();
+  //stabilizerInit();
   controllerInit();
   ref_generatorInit();
   mode_switcherInit();
