@@ -81,7 +81,7 @@ static bool isInit;
 
 /* System wide synchronisation */
 xSemaphoreHandle canStartMutex;
-SemaphoreHandle_t xSemaphore = NULL; // For blinking ex
+QueueHandle_t xQueue1 = NULL; // For blinking ex
 int FREQ = 10;
 
 /* Private functions */
@@ -104,7 +104,7 @@ void systemInit(void)
 
   canStartMutex = xSemaphoreCreateMutex();
   xSemaphoreTake(canStartMutex, portMAX_DELAY);
-  xSemaphore = xSemaphoreCreateMutex(); // for blinking ex
+  xQueue1 = xQueueCreate(1, sizeOf( float ) ); // for blinking ex
 
 #ifdef PLATFORM_CF2
   usblinkInit();

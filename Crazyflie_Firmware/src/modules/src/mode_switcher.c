@@ -11,6 +11,7 @@ or STOP (controller off)
 
 static bool isInit;
 static int status=0;
+static int FREQ=10;
 
 static int toggle(int var){
   return var?0:1;
@@ -30,7 +31,6 @@ static void mode_switcherTask(void* param)
   while(1)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(0.5)); // 500Hz
-    xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
 
     // Get reference (from where?)
 
@@ -41,7 +41,8 @@ static void mode_switcherTask(void* param)
     // Testing
     FREQ = status?10:5;
     status = toggle(status);
-    xSemaphoreGive(xSemaphore); // release the sem.
+    xQueueSend( xQueue1,( void * ) &FREQ, ( TickType_t ) 1000 );
+    xQueueSend( xQueue2,( void * ) &FREQ, ( TickType_t ) 1000 );
       }
     }
 

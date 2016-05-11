@@ -48,8 +48,7 @@ static void ref_generatorTask(void* param)
   while(1)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(FREQ)); // delay until next
-   xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
-
+    xQueueReceive( xQueue2, &( FREQ ), ( TickType_t ) 1000 ) // if/else needed?
     // Get reference (from where?) (from commander)
     commanderGetRPY(&eulerRollDesired, &eulerPitchDesired, &eulerYawDesired); // sets the desired to what the user want
 
@@ -60,10 +59,9 @@ static void ref_generatorTask(void* param)
     // For this week we just toggle some leds
     ledSet(LED_RED_R,ledstatus);
     ledstatus = toggle(ledstatus);
-    xSemaphoreGive(xSemaphore); // release the sem.
 
       }
-    }
+}
 
 void ref_generatorInit(void)
 {

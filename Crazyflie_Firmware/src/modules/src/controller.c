@@ -38,7 +38,7 @@ static void controllerTask(void* param)
   while(1)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(FREQ)); // delay until new ref or state estimation
-    xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
+    xQueueReceive( xQueue1, &( FREQ ), ( TickType_t ) 1000 ) // if/else needed?
     // Get error
     //e=ref-state;
 
@@ -62,9 +62,8 @@ static void controllerTask(void* param)
     // For this week we just toggle some leds
     ledSet(LED_GREEN_L,ledstatus);
     ledstatus = toggle(ledstatus);
-    xSemaphoreGive(xSemaphore); // release the sem.
       }
-    }
+}
 
 
 void controllerInit(void)
@@ -80,4 +79,3 @@ void controllerInit(void)
 
   isInit = true;
 }
-
