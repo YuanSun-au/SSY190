@@ -30,7 +30,7 @@ static void mode_switcherTask(void* param)
   while(1)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(0.5)); // 500Hz
-    xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
+    //xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ); // Take the semaphore (block all other)
 
     // Get reference (from where?)
 
@@ -41,7 +41,7 @@ static void mode_switcherTask(void* param)
     // Testing
     FREQ = status?10:5;
     status = toggle(status);
-    xSemaphoreGive(xSemaphore); // release the sem.
+    //xSemaphoreGive(xSemaphore); // release the sem.
       }
     }
 
