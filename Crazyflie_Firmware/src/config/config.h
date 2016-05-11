@@ -71,6 +71,8 @@
 
 // Task priorities. Higher number higher priority
 #define CONTROLLER_TASK_PRI     4
+#define MODE_SW_TASK_PRI     4
+#define REF_GEN_TASK_PRI     4
 #define STABILIZER_TASK_PRI     4
 #define ADC_TASK_PRI            3
 #define SYSTEM_TASK_PRI         2
@@ -120,6 +122,8 @@
 #define EXTRX_TASK_NAME         "EXTRX"
 #define UART_RX_TASK_NAME       "UART"
 #define CONTROLLER_TASK_NAME    "CONTROLLER"
+#define REF_GEN_TASK_NAME    "REFERENCE_GENERATOR"
+#define MODE_SW_TASK_NAME    "CONTROLLER"
 
 //Task stack sizes
 #define SYSTEM_TASK_STACKSIZE         (2* configMINIMAL_STACK_SIZE)
@@ -140,6 +144,8 @@
 #define EXTRX_TASK_STACKSIZE          configMINIMAL_STACK_SIZE
 #define UART_RX_TASK_STACKSIZE        configMINIMAL_STACK_SIZE
 #define CONTROLLER_TASK_STACKSIZE     (3 * configMINIMAL_STACK_SIZE)
+#define REF_GEN_TASK_STACKSIZE     (3 * configMINIMAL_STACK_SIZE)
+#define MODE_SW_TASK_STACKSIZE     (3 * configMINIMAL_STACK_SIZE)
 
 //The radio channel. From 0 to 125
 #define RADIO_CHANNEL 80

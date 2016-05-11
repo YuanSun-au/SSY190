@@ -78,6 +78,8 @@ static bool isInit;
 
 /* System wide synchronisation */
 xSemaphoreHandle canStartMutex;
+SemaphoreHandle_t xSemaphore = NULL; // For blinking ex
+int FREQ = 10;
 
 /* Private functions */
 static void systemTask(void *arg);
@@ -99,6 +101,7 @@ void systemInit(void)
 
   canStartMutex = xSemaphoreCreateMutex();
   xSemaphoreTake(canStartMutex, portMAX_DELAY);
+  xSemaphore = xSemaphoreCreateMutex(); // for blinking ex
 
 #ifdef PLATFORM_CF2
   usblinkInit();
@@ -178,7 +181,10 @@ void systemTask(void *arg)
 
   commInit();
   commanderInit();
-  stabilizerInit();
+//  stabilizerInit();
+  controllerInit();
+  ref_generatorInit();
+  mode_switcherInit();
 #ifdef PLATFORM_CF2
   deckInit();
   #endif
