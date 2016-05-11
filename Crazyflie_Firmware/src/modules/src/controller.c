@@ -22,7 +22,6 @@ void controllerInit(void)
   xTaskCreate(controllerTask, CONTROLLER_TASK_NAME,
               CONTROLLER_TASK_STACKSIZE, NULL, CONTROLLER_TASK_PRI, NULL);
 
-
   isInit = true;
 }
 
@@ -50,11 +49,16 @@ static void controllerTask(void* param)
     inputs=K*e;
 
     // Translate from (T,tx,ty,tz) to motorPowerMi
+
     //check the book at page 80
     motorPowerM1 = limitThrust();
     motorPowerM2 = limitThrust();
     motorPowerM3 = limitThrust();
     motorPowerM4 = limitThrust();
 
+    motorsSetRatio(MOTOR_M1, motorPowerM1);
+    motorsSetRatio(MOTOR_M1, motorPowerM1);
+    motorsSetRatio(MOTOR_M1, motorPowerM1);
+    motorsSetRatio(MOTOR_M1, motorPowerM1);
       }
     }
