@@ -32,7 +32,7 @@
 extern int FREQ;
 extern SemaphoreHandle_t xSemaphore;
 void ref_generatorInit(void);
-void ref_generatorTest(void);
+bool ref_generatorTest(void);
 
 
 #endif /* controller_H_ */

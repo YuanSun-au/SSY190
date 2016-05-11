@@ -32,7 +32,7 @@
 extern int FREQ;
 extern SemaphoreHandle_t xSemaphore;
 void mode_switcherInit(void);
-void mode_switcherTest(void);
+bool mode_switcherTest(void);
 
 
 #endif /* controller_H_ */
