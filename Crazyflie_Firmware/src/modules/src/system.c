@@ -183,7 +183,7 @@ void systemTask(void *arg)
 
   commInit();
   commanderInit();
-  //stabilizerInit();
+  stabilizerInit();
   mode_switcherInit(&xQueue1,&xQueue2);
   controllerInit(&xQueue1);
   ref_generatorInit(&xQueue2);
@@ -202,7 +202,7 @@ void systemTask(void *arg)
   pass &= configblockTest();
   pass &= commTest();
   pass &= commanderTest();
-//  pass &= stabilizerTest();
+  pass &= stabilizerTest();
 #ifdef PLATFORM_CF2
   pass &= deckTest();
   #endif
