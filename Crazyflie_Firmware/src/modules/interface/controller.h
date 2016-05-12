@@ -29,7 +29,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-void controllerInit(void);
+void controllerInit(QueueHandle_t *q1)
 
 
 #endif /* controller_H_ */
