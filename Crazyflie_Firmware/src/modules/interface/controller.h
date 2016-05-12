@@ -28,6 +28,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "queue.h"
 
 
 void controllerInit(QueueHandle_t *q1);

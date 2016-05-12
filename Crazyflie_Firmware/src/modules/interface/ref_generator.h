@@ -28,6 +28,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "queue.h"
 
 void ref_generatorInit(QueueHandle_t *q2);
 

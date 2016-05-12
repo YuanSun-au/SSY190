@@ -28,6 +28,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "queue.h"
 
 void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2);
 
