@@ -61,8 +61,8 @@ static void ref_generatorTask(void* param)
     // Tell controller we have a new reference (if we have? do we need to?)
 
     // For this week we just toggle some leds
-    ledSet(CHG_LED,ledstatus);
-    ledstatus = toggle(ledstatus);
+    //ledSet(CHG_LED,ledstatus);
+    //ledstatus = toggle(ledstatus);
 
       }
 }
@@ -86,3 +86,8 @@ bool ref_generatorTest(void)
 {
   return true;
 }
+
+/* Loggable variables */
+LOG_GROUP_START(ref)
+LOG_ADD(LOG_INT8, ref_erd, &eulerRollDesired)
+LOG_GROUP_STOP(sys)
