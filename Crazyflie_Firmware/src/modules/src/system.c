@@ -81,7 +81,7 @@ static bool isInit;
 
 /* System wide synchronisation */
 xSemaphoreHandle canStartMutex;
-QueueHandle_t xQueue1 = NULL; // For blinking ex
+QueueHandle_t xQueue1, xQueue2;
 int FREQ = 10;
 
 /* Private functions */
@@ -185,9 +185,9 @@ void systemTask(void *arg)
   commInit();
   commanderInit();
   //stabilizerInit();
-  controllerInit();
-  ref_generatorInit();
-  mode_switcherInit();
+  mode_switcherInit(&xQueue1,&xQueue2);
+  controllerInit(&xQueue1);
+  ref_generatorInit(&xQueue2);
 #ifdef PLATFORM_CF2
   deckInit();
   #endif

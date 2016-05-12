@@ -12,6 +12,7 @@ or STOP (controller off)
 static bool isInit;
 static int status=0;
 static int FREQ=10;
+static QueueHandle_t xQueue1,xQueue2;
 
 static int toggle(int var){
   return var?0:1;
@@ -46,13 +47,16 @@ static void mode_switcherTask(void* param)
       }
     }
 
-void mode_switcherInit(void)
+void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2)
 {
   if(isInit)
     return;
 
   // Call dependency inits
-
+ xQueue1 = &q1;
+ xQueue1 = xQueueCreate( 1, sizeof( float ) );
+ xQueue2 = &q2;
+ xQueue2 = xQueueCreate( 1, sizeof( float ) );
   // Create task
   xTaskCreate(mode_switcherTask, MODE_SW_TASK_NAME,
               MODE_SW_TASK_STACKSIZE, NULL, MODE_SW_TASK_PRI, NULL);
