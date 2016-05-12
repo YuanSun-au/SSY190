@@ -104,7 +104,6 @@ void systemInit(void)
 
   canStartMutex = xSemaphoreCreateMutex();
   xSemaphoreTake(canStartMutex, portMAX_DELAY);
-  xQueue1 = xQueueCreate(1, sizeOf( float ) ); // for blinking ex
 
 #ifdef PLATFORM_CF2
   usblinkInit();

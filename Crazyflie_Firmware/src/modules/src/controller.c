@@ -15,7 +15,8 @@ OUT: motor power
 #include "controller.h"
 
 static bool isInit;
-
+static QueueHandle_t* xQueue1;
+static int* FREQ;
 
 static int toggle(int var){
   return var?0:1;
@@ -65,13 +66,14 @@ static void controllerTask(void* param)
 }
 
 
-void controllerInit(void)
+void controllerInit(QueueHandle_t *q1)
 {
   if(isInit)
     return;
 
   // Call dependency inits
 
+  xQueue1 = &q1;
   // Create task
   xTaskCreate(controllerTask, CONTROLLER_TASK_NAME,
               CONTROLLER_TASK_STACKSIZE, NULL, CONTROLLER_TASK_PRI, NULL);

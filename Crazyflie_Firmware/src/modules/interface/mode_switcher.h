@@ -29,8 +29,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-extern int FREQ;
-extern SemaphoreHandle_t xSemaphore;
 void mode_switcherInit(void);
 
 

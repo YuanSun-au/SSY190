@@ -11,8 +11,8 @@ or STOP (controller off)
 
 static bool isInit;
 static int status=0;
-static int FREQ=10;
-static QueueHandle_t xQueue1,xQueue2;
+static int* FREQ;
+static QueueHandle_t* xQueue1,xQueue2;
 
 static int toggle(int var){
   return var?0:1;

@@ -18,6 +18,8 @@ OUT: reference to controller
 #include "ref_generator.h"
 
 static bool isInit;
+static QueueHandle_t* xQueue2;
+static int* FREQ;
 
 // euler angles from sensorFusion
 static float eulerRollActual;
@@ -28,7 +30,6 @@ static float eulerRollDesired;
 static float eulerPitchDesired;
 static float eulerYawDesired;
 
-static QueueHandle_t xQueue2;
 
 static int toggle(int var){
   return var?0:1;
@@ -65,14 +66,14 @@ static void ref_generatorTask(void* param)
       }
 }
 
-void ref_generatorInit(QueueHandle_t *q1)
+void ref_generatorInit(QueueHandle_t *q2)
 {
   if(isInit)
     return;
 
   // Call dependency inits
 
-  
+  xQueue2 = &q2;
   // Create task
   xTaskCreate(ref_generatorTask, REF_GEN_TASK_NAME,
               REF_GEN_TASK_STACKSIZE, NULL, REF_GEN_TASK_PRI, NULL);
