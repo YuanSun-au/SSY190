@@ -14,7 +14,7 @@ OUT: motor power
 #include "config.h"
 #include "system.h"
 #include "controller.h"
-#include "console.h"
+#include "debug.h"
 
 static bool isInit;
 static QueueHandle_t* xQueue1;
