@@ -83,7 +83,6 @@ static bool isInit;
 /* System wide synchronisation */
 xSemaphoreHandle canStartMutex;
 QueueHandle_t xQueue1, xQueue2;
-int FREQ = 10;
 
 /* Private functions */
 static void systemTask(void *arg);
