@@ -109,7 +109,7 @@ static void stabilizerTask(void* param)
       {
         sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
         sensfusion6GetEulerRPY(&eulerRollActual, &eulerPitchActual, &eulerYawActual);
-        zAcc = sensfusion6GetAccZ(acc.x,acc.y,acc.z);
+        zAcc = sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z);
 
         // Set motors depending on the euler angles
         motorPowerM1 = limitThrust(fabs(32000*eulerYawActual/180.0));
