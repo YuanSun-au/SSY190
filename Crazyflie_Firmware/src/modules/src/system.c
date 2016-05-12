@@ -184,9 +184,9 @@ void systemTask(void *arg)
   commInit();
   commanderInit();
   stabilizerInit();
-  mode_switcherInit(&xQueue1,&xQueue2);
-  controllerInit(&xQueue1);
-  ref_generatorInit(&xQueue2);
+  //mode_switcherInit(&xQueue1,&xQueue2);
+  //controllerInit(&xQueue1);
+  //ref_generatorInit(&xQueue2);
 #ifdef PLATFORM_CF2
   deckInit();
   #endif
@@ -209,9 +209,9 @@ void systemTask(void *arg)
   pass &= soundTest();
   pass &= memTest();
   pass &= watchdogNormalStartTest();
-  pass &= controllerTest();
-  pass &= ref_generatorTest();
-  pass &= mode_switcherTest();
+  //pass &= controllerTest();
+  //pass &= ref_generatorTest();
+  //pass &= mode_switcherTest();
 
   //Start the firmware
   if(pass)
