@@ -29,7 +29,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2)
+void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2);
 
 
 #endif /* controller_H_ */

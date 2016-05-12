@@ -29,7 +29,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-void ref_generatorInit(QueueHandle_t *q2)
+void ref_generatorInit(QueueHandle_t *q2);
 
 
 #endif /* controller_H_ */
