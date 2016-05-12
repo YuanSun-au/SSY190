@@ -38,8 +38,8 @@ static void controllerTask(void* param)
 
   while(1)
   {
-    vTaskDelayUntil(&lastWakeTime, F2T(FREQ)); // delay until new ref or state estimation
-    xQueueReceive( xQueue1, &( FREQ ), ( TickType_t ) 1000 ) // if/else needed?
+    vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until new ref or state estimation
+    xQueueReceive( xQueue1, &( FREQ ), ( TickType_t ) 1000 ); // if/else needed?
     // Get error
     //e=ref-state;
 
@@ -74,7 +74,7 @@ void controllerInit(QueueHandle_t *q1)
 
   // Call dependency inits
 
-  xQueue1 = &q1;
+  xQueue1 = q1;
   // Create task
   xTaskCreate(controllerTask, CONTROLLER_TASK_NAME,
               CONTROLLER_TASK_STACKSIZE, NULL, CONTROLLER_TASK_PRI, NULL);
