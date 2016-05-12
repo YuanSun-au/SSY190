@@ -4,10 +4,10 @@ or STOP (controller off)
 */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "semphr.h"
 #include "config.h"
 #include "system.h"
 #include "mode_switcher.h"
+#include "queue.h"
 
 static bool isInit;
 static int status=0;

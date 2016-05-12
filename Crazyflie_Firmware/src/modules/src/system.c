@@ -31,6 +31,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "queue.h"
 
 #include "debug.h"
 #include "version.h"

@@ -9,6 +9,7 @@ OUT: motor power
 #include "FreeRTOS.h"
 #include "task.h"
 #include "ledseq.h"
+#include "queue.h"
 
 #include "config.h"
 #include "system.h"

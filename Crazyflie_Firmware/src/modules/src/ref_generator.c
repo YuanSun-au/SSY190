@@ -10,6 +10,7 @@ OUT: reference to controller
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "queue.h"
 // From Crazyflie
 #include "commander.h"
 #include "ledseq.h"
