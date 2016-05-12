@@ -62,7 +62,7 @@ static void controllerTask(void* param)
 
 
     // For this week we just toggle some leds
-    DEBUG_PRINT("--controller--\n");
+    //DEBUG_PRINT("--controller--\n");
     ledSet(CHG_LED,ledstatus);
     ledstatus = toggle(ledstatus);
       }
