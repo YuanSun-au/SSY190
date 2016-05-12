@@ -69,6 +69,7 @@ static Axis3f mag;  // Magnetometer axis data in testla
 static float eulerRollActual;   // Measured roll angle in deg
 static float eulerPitchActual;  // Measured pitch angle in deg
 static float eulerYawActual;    // Measured yaw angle in deg
+static float zAcc;
 
 uint16_t actuatorThrust;  // Actuator output for thrust base
 
@@ -108,6 +109,7 @@ static void stabilizerTask(void* param)
       {
         sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
         sensfusion6GetEulerRPY(&eulerRollActual, &eulerPitchActual, &eulerYawActual);
+        zAcc = sensfusion6GetAccZ(acc.x,acc.y,acc.z);
 
         // Set motors depending on the euler angles
         motorPowerM1 = limitThrust(fabs(32000*eulerYawActual/180.0));
@@ -163,6 +165,7 @@ LOG_GROUP_START(stabilizer)
 LOG_ADD(LOG_FLOAT, roll, &eulerRollActual)
 LOG_ADD(LOG_FLOAT, pitch, &eulerPitchActual)
 LOG_ADD(LOG_FLOAT, yaw, &eulerYawActual)
+LOG_ADD(LOG_FLOAT, zAcc, &zAcc)
 LOG_ADD(LOG_UINT16, thrust, &actuatorThrust)
 LOG_GROUP_STOP(stabilizer)
 
