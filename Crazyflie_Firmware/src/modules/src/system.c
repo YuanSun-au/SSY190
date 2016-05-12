@@ -184,7 +184,7 @@ void systemTask(void *arg)
 
   commInit();
   commanderInit();
-  //stabilizerInit();
+  stabilizerInit();
   controllerInit();
   ref_generatorInit();
   mode_switcherInit();
