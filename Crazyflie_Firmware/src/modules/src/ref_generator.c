@@ -24,13 +24,13 @@ static QueueHandle_t* xQueue2;
 static int* FREQ;
 
 // euler angles from sensorFusion
-static float eulerRollActual;
-static float eulerPitchActual;
-static float eulerYawActual;
+//static float eulerRollActual;
+//static float eulerPitchActual;
+//static float eulerYawActual;
 // euler angles from user
-static float eulerRollDesired;
-static float eulerPitchDesired;
-static float eulerYawDesired;
+//static float eulerRollDesired;
+//static float eulerPitchDesired;
+//static float eulerYawDesired;
 
 
 static int toggle(int var){
@@ -39,23 +39,23 @@ static int toggle(int var){
 
 static void ref_generatorTask(void* param)
 {
-  uint32_t lastWakeTime;
+//  uint32_t lastWakeTime;
 
 //  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR); // OMG WHAT IS THIS
 
   //Wait for the system to be fully started
   systemWaitStart();
 
-  lastWakeTime = xTaskGetTickCount ();
+//  lastWakeTime = xTaskGetTickCount ();
 
-  int ledstatus = 0; // for the ledToggle
+  //int ledstatus = 0; // for the ledToggle
 
   while(1)
   {
     //vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until next
     xQueueReceive( xQueue2, &( FREQ ), ( TickType_t ) 1000 ); // if/else needed?
     // Get reference (from where?) (from commander)
-    commanderGetRPY(&eulerRollDesired, &eulerPitchDesired, &eulerYawDesired); // sets the desired to what the user want
+    //commanderGetRPY(&eulerRollDesired, &eulerPitchDesired, &eulerYawDesired); // sets the desired to what the user want
 
     // cretate a smooth trajectory for the reference (maybe a derivative?)
 
@@ -90,5 +90,5 @@ bool ref_generatorTest(void)
 
 /* Loggable variables */
 LOG_GROUP_START(ref)
-LOG_ADD(LOG_INT8, ref_erd, &eulerRollDesired)
+LOG_ADD(LOG_INT8, ref_freq, &FREQ)
 LOG_GROUP_STOP(ref)
