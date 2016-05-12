@@ -17,7 +17,7 @@ OUT: motor power
 
 static bool isInit;
 static QueueHandle_t* xQueue1;
-static int* FREQ;
+static int FREQ;
 
 static int toggle(int var){
   return var?0:1;
@@ -39,7 +39,7 @@ static void controllerTask(void* param)
   while(1)
   {
     //vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until new ref or state estimation
-    xQueueReceive( xQueue1, &( FREQ ), ( TickType_t ) 1 ); // if/else needed?
+    xQueueReceive( xQueue1, &( FREQ ), ( TickType_t ) 100 ); // if/else needed?
     // Get error
     //e=ref-state;
 
