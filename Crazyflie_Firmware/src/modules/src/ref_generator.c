@@ -17,6 +17,7 @@ OUT: reference to controller
 #include "config.h"
 #include "system.h"
 #include "ref_generator.h"
+#include "log.h"
 
 static bool isInit;
 static QueueHandle_t* xQueue2;
