@@ -32,7 +32,7 @@ static void mode_switcherTask(void* param)
 
   while(1)
   {
-    vTaskDelayUntil(&lastWakeTime, F2T(5)); // 500Hz
+    vTaskDelayUntil(&lastWakeTime, F2T(1)); // 500Hz
 
     // Get reference (from where?)
 

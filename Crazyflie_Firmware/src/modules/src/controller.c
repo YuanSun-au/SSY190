@@ -14,6 +14,7 @@ OUT: motor power
 #include "config.h"
 #include "system.h"
 #include "controller.h"
+#include "console.h"
 
 static bool isInit;
 static QueueHandle_t* xQueue1;
@@ -61,6 +62,7 @@ static void controllerTask(void* param)
 
 
     // For this week we just toggle some leds
+    DEBUG_PRINT("--controller--\n");
     ledSet(CHG_LED,ledstatus);
     ledstatus = toggle(ledstatus);
       }
