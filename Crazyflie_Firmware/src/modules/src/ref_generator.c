@@ -51,7 +51,7 @@ static void ref_generatorTask(void* param)
 
   while(1)
   {
-    vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until next
+    //vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until next
     xQueueReceive( xQueue2, &( FREQ ), ( TickType_t ) 1000 ); // if/else needed?
     // Get reference (from where?) (from commander)
     commanderGetRPY(&eulerRollDesired, &eulerPitchDesired, &eulerYawDesired); // sets the desired to what the user want
