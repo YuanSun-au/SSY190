@@ -13,7 +13,7 @@ OUT: reference to controller
 #include "queue.h"
 // From Crazyflie
 #include "commander.h"
-#include "ledseq.h"
+#include "led.h"
 #include "config.h"
 #include "system.h"
 #include "ref_generator.h"
@@ -61,7 +61,7 @@ static void ref_generatorTask(void* param)
     // Tell controller we have a new reference (if we have? do we need to?)
 
     // For this week we just toggle some leds
-    ledSet(LED_RED_R,ledstatus);
+    ledSet(CHG_LED,ledstatus);
     ledstatus = toggle(ledstatus);
 
       }
@@ -81,4 +81,8 @@ void ref_generatorInit(QueueHandle_t *q2)
 
 
   isInit = true;
+}
+bool ref_generatorTest(void)
+{
+  return true;
 }

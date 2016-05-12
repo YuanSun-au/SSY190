@@ -31,6 +31,7 @@
 #include "queue.h"
 
 void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2);
+bool mode_switcherTest(void);
 
 
 #endif /* controller_H_ */

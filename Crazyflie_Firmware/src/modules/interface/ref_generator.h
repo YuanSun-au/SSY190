@@ -31,6 +31,7 @@
 #include "queue.h"
 
 void ref_generatorInit(QueueHandle_t *q2);
+bool ref_generatorTest(void);
 
 
 #endif /* controller_H_ */

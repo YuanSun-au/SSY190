@@ -61,7 +61,8 @@ static void controllerTask(void* param)
 
 
     // For this week we just toggle some leds
-    ledSet(LED_GREEN_L,ledstatus);
+    ledSet(ERR_LED1,ledstatus);
+    ledSet(ERR_LED2,ledstatus);
     ledstatus = toggle(ledstatus);
       }
 }
@@ -80,4 +81,9 @@ void controllerInit(QueueHandle_t *q1)
               CONTROLLER_TASK_STACKSIZE, NULL, CONTROLLER_TASK_PRI, NULL);
 
   isInit = true;
+}
+
+bool controllerTest(void)
+{
+  return true;
 }

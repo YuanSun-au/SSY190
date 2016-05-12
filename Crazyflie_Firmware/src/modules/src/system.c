@@ -202,13 +202,16 @@ void systemTask(void *arg)
   pass &= configblockTest();
   pass &= commTest();
   pass &= commanderTest();
-  pass &= stabilizerTest();
+//  pass &= stabilizerTest();
 #ifdef PLATFORM_CF2
   pass &= deckTest();
   #endif
   pass &= soundTest();
   pass &= memTest();
   pass &= watchdogNormalStartTest();
+  pass &= controllerTest();
+  pass &= ref_generatorTest();
+  pass &= mode_switcherTest();
 
   //Start the firmware
   if(pass)

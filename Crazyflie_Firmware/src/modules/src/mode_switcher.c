@@ -64,3 +64,7 @@ void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2)
 
   isInit = true;
 }
+bool mode_switcherTest(void)
+{
+  return true;
+}

@@ -30,8 +30,7 @@
 #include <stdint.h>
 #include "queue.h"
 
+bool controllerTest(void);
 
 void controllerInit(QueueHandle_t *q1);
-
-
 #endif /* controller_H_ */
