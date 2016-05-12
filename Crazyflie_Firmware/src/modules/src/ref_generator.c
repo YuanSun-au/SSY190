@@ -21,7 +21,7 @@ OUT: reference to controller
 
 static bool isInit;
 static QueueHandle_t* xQueue2;
-static int* FREQ;
+static int FREQ;
 
 // euler angles from sensorFusion
 //static float eulerRollActual;
@@ -90,5 +90,5 @@ bool ref_generatorTest(void)
 
 /* Loggable variables */
 LOG_GROUP_START(ref)
-LOG_ADD(LOG_INT8, ref_freq, FREQ)
+LOG_ADD(LOG_INT8, ref_freq, &FREQ)
 LOG_GROUP_STOP(ref)
