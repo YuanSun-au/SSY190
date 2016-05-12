@@ -90,5 +90,5 @@ bool ref_generatorTest(void)
 
 /* Loggable variables */
 LOG_GROUP_START(ref)
-LOG_ADD(LOG_INT8, ref_freq, &FREQ)
+LOG_ADD(LOG_INT8, ref_freq, FREQ)
 LOG_GROUP_STOP(ref)
