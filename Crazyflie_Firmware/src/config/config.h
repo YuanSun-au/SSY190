@@ -70,8 +70,8 @@
 
 // Task priorities. Higher number higher priority
 #define CONTROLLER_TASK_PRI     3
-#define MODE_SW_TASK_PRI    3
-#define REF_GEN_TASK_PRI     2
+#define MODE_SW_TASK_PRI        4
+#define REF_GEN_TASK_PRI        3
 #define STABILIZER_TASK_PRI     4
 #define ADC_TASK_PRI            3
 #define SYSTEM_TASK_PRI         2

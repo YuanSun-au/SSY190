@@ -218,9 +218,10 @@ void systemTask(void *arg)
   {
     selftestPassed = 1;
     systemStart();
-    soundSetEffect(SND_STARTUP);
+    //soundSetEffect(SND_STARTUP);
     ledseqRun(SYS_LED, seq_alive);
     ledseqRun(LINK_LED, seq_testPassed);
+    DEBUG_PRINT("Passed SELFTESTS \n")
   }
   else
   {
