@@ -112,10 +112,10 @@ static void stabilizerTask(void* param)
         zAcc = sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z);
 
         // Set motors depending on the euler angles
-        motorPowerM1 = limitThrust(fabs(32000*eulerYawActual/180.0));
-        motorPowerM2 = limitThrust(fabs(32000*eulerPitchActual/180.0));
-        motorPowerM3 = limitThrust(fabs(32000*eulerRollActual/180.0));
-        motorPowerM4 = limitThrust(fabs(32000*eulerYawActual/180.0));
+        motorPowerM1 = limitThrust(fabs(32000*zAcc));
+        motorPowerM2 = limitThrust(fabs(32000*zAcc));
+        motorPowerM3 = limitThrust(fabs(32000*zAcc));
+        motorPowerM4 = limitThrust(fabs(32000*zAcc));
 
         motorsSetRatio(MOTOR_M1, motorPowerM1);
         motorsSetRatio(MOTOR_M2, motorPowerM2);
