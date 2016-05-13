@@ -21,7 +21,7 @@ OUT: reference to controller
 
 static bool isInit;
 static QueueHandle_t* xQueue2;
-static int FREQ;
+int FREQ;
 
 // euler angles from sensorFusion
 //static float eulerRollActual;
