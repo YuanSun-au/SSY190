@@ -77,7 +77,7 @@ uint32_t motorPowerM1;  // Motor 1 power output (16bit value used: 0 - 65535)
 uint32_t motorPowerM2;  // Motor 2 power output (16bit value used: 0 - 65535)
 uint32_t motorPowerM3;  // Motor 3 power output (16bit value used: 0 - 65535)
 uint32_t motorPowerM4;  // Motor 4 power output (16bit value used: 0 - 65535)
-
+float zacc_base=0;
 static bool isInit;
 
 
@@ -110,7 +110,7 @@ static void stabilizerTask(void* param)
         sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
         sensfusion6GetEulerRPY(&eulerRollActual, &eulerPitchActual, &eulerYawActual);
         zAcc = sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z);
-        zAcc += 1;
+        zAcc += zacc_base;
         // Set motors depending on the euler angles
         motorPowerM1 = limitThrust(fabs(32000*zAcc));
         motorPowerM2 = limitThrust(fabs(32000*zAcc));
@@ -193,3 +193,7 @@ LOG_ADD(LOG_INT32, m1, &motorPowerM1)
 LOG_ADD(LOG_INT32, m2, &motorPowerM2)
 LOG_ADD(LOG_INT32, m3, &motorPowerM3)
 LOG_GROUP_STOP(motor)
+
+PARAM_GROUP_START(zacc)
+PARAM_ADD(PARAM_FLOAT, zacc, &zacc_base)
+PARAM_GROUP_STOP(zacc)
