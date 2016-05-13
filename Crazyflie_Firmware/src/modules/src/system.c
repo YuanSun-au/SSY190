@@ -186,9 +186,9 @@ void systemTask(void *arg)
   stabilizerInit();
   xQueue1 = xQueueCreate( 1, sizeof( int* ) );
   xQueue2 = xQueueCreate( 1, sizeof( int* ) );
-  mode_switcherInit(&xQueue1,&xQueue2);
-  controllerInit(&xQueue1);
-  ref_generatorInit(&xQueue2);
+  mode_switcherInit();
+  controllerInit();
+  ref_generatorInit();
 #ifdef PLATFORM_CF2
   deckInit();
   #endif

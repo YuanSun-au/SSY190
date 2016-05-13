@@ -17,7 +17,7 @@ OUT: motor power
 #include "debug.h"
 
 static bool isInit;
-QueueHandle_t* xQueue1;
+extern QueueHandle_t xQueue1;
 int* FREQ;
 
 static int toggle(int var){
@@ -40,7 +40,7 @@ static void controllerTask(void* param)
   while(1)
   {
     //vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until new ref or state estimation
-    if(xQueueReceive( *xQueue1, &( FREQ ),( TickType_t ) 1000 ))
+    if(xQueueReceive( xQueue1, &( FREQ ),( TickType_t ) 1000 ))
       { // if/else needed?
     // Get error
     //e=ref-state;
@@ -71,14 +71,13 @@ static void controllerTask(void* param)
 }
 
 
-void controllerInit(QueueHandle_t *q1)
+void controllerInit(void)
 {
   if(isInit)
     return;
 
   // Call dependency inits
 
-  xQueue1 = q1;
   // Create task
   xTaskCreate(controllerTask, CONTROLLER_TASK_NAME,
               CONTROLLER_TASK_STACKSIZE, NULL, CONTROLLER_TASK_PRI, NULL);

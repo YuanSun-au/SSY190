@@ -13,8 +13,8 @@ or STOP (controller off)
 static bool isInit;
 static int status=0;
 int FREQ;
-static QueueHandle_t *xQueue1;
-static QueueHandle_t *xQueue2;
+extern QueueHandle_t xQueue1;
+extern QueueHandle_t xQueue2;
 int* pnt;
 
 static int toggle(int var){
@@ -47,19 +47,17 @@ static void mode_switcherTask(void* param)
     FREQ = status?10:5;
     status = toggle(status);
     pnt = &FREQ;
-    xQueueSend( *xQueue1,( void * ) &pnt, ( TickType_t ) 1000 );
-    xQueueSend( *xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
+    xQueueSend( xQueue1,( void * ) &pnt, ( TickType_t ) 1000 );
+    xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
       }
     }
 
-void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2)
+void mode_switcherInit(void)
 {
   if(isInit)
     return;
 
   // Call dependency inits
- xQueue1 = q1;
- xQueue2 = q2;
 
   // Create task
   xTaskCreate(mode_switcherTask, MODE_SW_TASK_NAME,

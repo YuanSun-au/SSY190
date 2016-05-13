@@ -21,7 +21,7 @@ OUT: reference to controller
 #include "debug.h"
 
 static bool isInit;
-QueueHandle_t* xQueue2;
+extern QueueHandle_t xQueue2;
 int* FREQ;
 
 // euler angles from sensorFusion
@@ -54,7 +54,7 @@ static void ref_generatorTask(void* param)
   while(1)
   {
     //vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until next
-    xQueueReceive( *xQueue2, &( FREQ ), portMAX_DELAY ); // if/else needed?
+    xQueueReceive( xQueue2, &( FREQ ), portMAX_DELAY ); // if/else needed?
     // Get reference (from where?) (from commander)
     //commanderGetRPY(&eulerRollDesired, &eulerPitchDesired, &eulerYawDesired); // sets the desired to what the user want
 
@@ -70,14 +70,13 @@ static void ref_generatorTask(void* param)
       }
 }
 
-void ref_generatorInit(QueueHandle_t *q2)
+void ref_generatorInit(void)
 {
   if(isInit)
     return;
 
   // Call dependency inits
 
-  xQueue2 = q2;
   // Create task
   xTaskCreate(ref_generatorTask, REF_GEN_TASK_NAME,
               REF_GEN_TASK_STACKSIZE, NULL, REF_GEN_TASK_PRI, NULL);
