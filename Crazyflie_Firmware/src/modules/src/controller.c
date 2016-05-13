@@ -67,7 +67,7 @@ static void controllerTask(void* param)
       ledSet(CHG_LED,ledstatus);
       ledstatus = toggle(ledstatus);
     }
-      }
+  }
 }
 
 
