@@ -47,8 +47,8 @@ static void mode_switcherTask(void* param)
     FREQ = status?10:5;
     status = toggle(status);
     pnt = &FREQ;
-    xQueueSend( xQueue1,( void * ) &pnt, ( TickType_t ) 1000 );
-    xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
+    xQueueSend( *xQueue1,( void * ) &pnt, ( TickType_t ) 1000 );
+    xQueueSend( *xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
       }
     }
 
@@ -59,9 +59,8 @@ void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2)
 
   // Call dependency inits
  xQueue1 = q1;
- xQueue1 = xQueueCreate( 1, sizeof( int* ) );
  xQueue2 = q2;
- xQueue2 = xQueueCreate( 1, sizeof( int* ) );
+
   // Create task
   xTaskCreate(mode_switcherTask, MODE_SW_TASK_NAME,
               MODE_SW_TASK_STACKSIZE, NULL, MODE_SW_TASK_PRI, NULL);
