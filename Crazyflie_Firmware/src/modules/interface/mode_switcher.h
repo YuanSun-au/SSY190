@@ -30,7 +30,7 @@
 #include <stdint.h>
 #include "queue.h"
 
-void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2);
+void mode_switcherInit(void);
 bool mode_switcherTest(void);
 
 

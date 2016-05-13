@@ -32,5 +32,5 @@
 
 bool controllerTest(void);
 
-void controllerInit(QueueHandle_t *q1);
+void controllerInit(void);
 #endif /* controller_H_ */

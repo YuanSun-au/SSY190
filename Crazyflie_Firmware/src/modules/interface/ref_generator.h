@@ -30,7 +30,7 @@
 #include <stdint.h>
 #include "queue.h"
 
-void ref_generatorInit(QueueHandle_t *q2);
+void ref_generatorInit(void);
 bool ref_generatorTest(void);
 
 
