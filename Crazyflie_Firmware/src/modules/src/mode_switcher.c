@@ -55,9 +55,9 @@ void mode_switcherInit(QueueHandle_t *q1, QueueHandle_t *q2)
 
   // Call dependency inits
  xQueue1 = q1;
- xQueue1 = xQueueCreate( 1, sizeof( float ) );
+ xQueue1 = xQueueCreate( 1, sizeof( int FREQ* ) );
  xQueue2 = q2;
- xQueue2 = xQueueCreate( 1, sizeof( float ) );
+ xQueue2 = xQueueCreate( 1, sizeof( int FREQ* ) );
   // Create task
   xTaskCreate(mode_switcherTask, MODE_SW_TASK_NAME,
               MODE_SW_TASK_STACKSIZE, NULL, MODE_SW_TASK_PRI, NULL);
