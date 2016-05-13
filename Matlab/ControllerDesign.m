@@ -100,7 +100,8 @@ for n=1:length(K(:,1))
 end
 fclose(fb);
 %A  discrete
-sysd=c2d(sys,1/500,'zoh');
+freq=250 %Not sure if 250 or 500 Hz!!!
+sysd=c2d(sys,1/freq,'zoh'); 
 Ad=fopen('Ad.txt','w');
 
 for n=1:length(sysd.a(:,1))
