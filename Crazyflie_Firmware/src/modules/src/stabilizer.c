@@ -108,31 +108,74 @@ static void stabilizerTask(void* param)
       {
         sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
         sensfusion6GetEulerRPY(&eulerRollActual, &eulerPitchActual, &eulerYawActual);
-
+        //Calulate p, q, r, u, v, w, x, y, z using integrals and derivatives?
+        
         //Kalman implementation
-        float y_k[12]; 			//Plant output initialize to 0 (how many elements?)
-        float y_hat_k[12];		//Plant output initialize to 0 (how many elements?)
+        float y_k[12]={eulerRollActual,eulerPitchActual,eulerYawActual,p,q,r,u,v,w,x,y,z}; 			
+        float y_hat_k[12]={0,0,0,0,0,0,0,0,0,0,0,0};		//Plant output initialize to 0 (how many elements?)
         float x_hat_k[12]; 		//Last estimated states
-        float A[12][12]=
-        {{0,0,0,1,0,0,0,0,0,0,0,0},
-         {0,0,0,0,1,0,0,0,0,0,0,0},
+        float A[12][12]=		//A matrix NOT discretized!!!
+        {
+		{1,0,0,0.002,0,0,0,0,0,0,0,0},
+		{0,1,0,0,0.002,0,0,0,0,0,0,0},
+		{0,0,1,0,0,0.002,0,0,0,0,0,0},
+		{0,0,0,1,0,0,0,0,0,0,0,0},
+		{0,0,0,0,1,0,0,0,0,0,0,0},
+		{0,0,0,0,0,1,0,0,0,0,0,0},
+		{0,-0.01962,0,0,-0.00001962,0,1,0,0,0,0,0},
+		{0.01962,0,0,0.00001962,0,0,0,1,0,0,0,0},
+		{0,0,0,0,0,0,0,0,1,0,0,0},
+		{0,-0.00001962,0,0,-0.00000001308,0,0.002,0,0,1,0,0},
+		{0.00001962,0,0,0.00000001308,0,0,0,0.002,0,0,1,0},
+		{0,0,0,0,0,0,0,0,0.002,0,0,1},
+        };
+        float B[12][4] = 	//B matrix NOT discretized!!!
+        {{0,0.1434,0,0},
+         {0,0,0.1393,0},
+		 {0,0,0,0.09204},
+		 {0,143.4,0,0},
+		 {0,0,69638,0},
+		 {0,0,0,46019},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {37.047,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+        };
+        float C[12][12] = 	//C matrix NOT discretized!!! (depends on number of meassured states)
+        {{1,0,0,0,0,0,0,0,0,0,0,0},
+         {0,1,0,0,0,0,0,0,0,0,0,0},
+		 {0,0,1,0,0,0,0,0,0,0,0,0},
+		 {0,0,0,1,0,0,0,0,0,0,0,0},
+		 {0,0,0,0,1,0,0,0,0,0,0,0},
 		 {0,0,0,0,0,1,0,0,0,0,0,0},
-		 {0,0,0,0,0,0,0,0,0,0,0,0},
-		 {0,0,0,0,0,0,0,0,0,0,0,0},
-		 {0,0,0,0,0,0,0,0,0,0,0,0},
-		 {0,-9.81,0,0,0,0,0,0,0,0,0,0},
-		 {9.81,0,0,0,0,0,0,0,0,0,0,0},
-		 {0,0,0,0,0,0,0,0,0,0,0,0},
 		 {0,0,0,0,0,0,1,0,0,0,0,0},
 		 {0,0,0,0,0,0,0,1,0,0,0,0},
 		 {0,0,0,0,0,0,0,0,1,0,0,0},
+		 {0,0,0,0,0,0,0,0,0,1,0,0},
+		 {0,0,0,0,0,0,0,0,0,0,1,0},
+		 {0,0,0,0,0,0,0,0,0,0,0,1},
         };
-        float C[12][12] = ... 	//C matrix discretized
-        float D[12][4] = ... 	//C matrix discretized
-		float u_k[4] 			//Last input
-		float E[12][12] 		//Part of state update equation
-		float x_hat_new[12] 	// Updated state, initialize to zero
-		
+        float D[12][4] = ... 	//D matrix NOT discretized!!! (depends on number of meassured states)
+		{{0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		 {0,0,0,0},
+		};
+        float u_k[4];			//Last input
+		float x_hat_new[12]; 	// Updated state, initialize to zero
+		float K[4][12];
+		float u_k[4]; //Input initialize with zeros?
+		float r_k[12]; //Reference
 		//Meassurment update
 		for(int i=0;i<12;i++)
         {
@@ -159,9 +202,6 @@ static void stabilizerTask(void* param)
 			}
 		}
         //LQR implementation
-        float K[4][12];
-        float u_k[4]; //Input initialize with zeros?
-        float r_k[12]; //Reference
         for(int i=0;i<4;i++)
         {
         	for(int j=0;j<12;j++)
