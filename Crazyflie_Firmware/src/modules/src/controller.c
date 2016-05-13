@@ -17,7 +17,7 @@ OUT: motor power
 #include "debug.h"
 
 static bool isInit;
-static QueueHandle_t* xQueue1;
+QueueHandle_t* xQueue1;
 int* FREQ;
 
 static int toggle(int var){

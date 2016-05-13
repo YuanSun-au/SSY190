@@ -21,7 +21,7 @@ OUT: reference to controller
 #include "debug.h"
 
 static bool isInit;
-static QueueHandle_t* xQueue2;
+QueueHandle_t* xQueue2;
 int* FREQ;
 
 // euler angles from sensorFusion
