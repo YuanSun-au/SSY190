@@ -110,45 +110,63 @@ static void stabilizerTask(void* param)
         sensfusion6GetEulerRPY(&eulerRollActual, &eulerPitchActual, &eulerYawActual);
 
         //Kalman implementation
-        float y[12]; //Plant output initialize to 0
-        float x_hat_k[12]; //Last estimated states
-        float C[12][12] = ... //C matrix discretized
-        float D[12][4] = ... //C matrix discretized
-		float u_k[4] //Last input
-        for(int i=0;i<12;i++)
+        float y_k[12]; 			//Plant output initialize to 0 (how many elements?)
+        float y_hat_k[12];		//Plant output initialize to 0 (how many elements?)
+        float x_hat_k[12]; 		//Last estimated states
+        float A[12][12]=
+        {{0,0,0,1,0,0,0,0,0,0,0,0},
+         {0,0,0,0,1,0,0,0,0,0,0,0},
+		 {0,0,0,0,0,1,0,0,0,0,0,0},
+		 {0,0,0,0,0,0,0,0,0,0,0,0},
+		 {0,0,0,0,0,0,0,0,0,0,0,0},
+		 {0,0,0,0,0,0,0,0,0,0,0,0},
+		 {0,-9.81,0,0,0,0,0,0,0,0,0,0},
+		 {9.81,0,0,0,0,0,0,0,0,0,0,0},
+		 {0,0,0,0,0,0,0,0,0,0,0,0},
+		 {0,0,0,0,0,0,1,0,0,0,0,0},
+		 {0,0,0,0,0,0,0,1,0,0,0,0},
+		 {0,0,0,0,0,0,0,0,1,0,0,0},
+        };
+        float C[12][12] = ... 	//C matrix discretized
+        float D[12][4] = ... 	//C matrix discretized
+		float u_k[4] 			//Last input
+		float E[12][12] 		//Part of state update equation
+		float x_hat_new[12] 	// Updated state, initialize to zero
+		
+		//Meassurment update
+		for(int i=0;i<12;i++)
         {
         	for(int j=0;j<12;j++)
         	{
-        		y_k[i]=y_k[i]+C[i][j]*x_hat_k[j];   //Meassurment update
+        		y_hat_k[i]=y_hat_k[i]+C[i][j]*x_hat_k[j];   
           	}
         	for(int j=0;j<4;j++)
 			{
-				y_k[i]=y_k[i]+D[i][j]*u_k[j];
+				y_hat_k[i]=y_hat_k[i]+D[i][j]*u_k[j];
 			}
         }
+        //State prediction
         for(int i=0;i<12;i++)
-        {
-        	for(int j=0;j<12;j++)
-        	{
-        		y_k[i]=y_k[i]+C[i][j]*x_hat_k[j];   //Meassurment update
-          	}
-        	for(int j=0;j<4;j++)
+		{
+			for(int j=0;j<12;j++)
 			{
-				y_k[i]=y_k[i]+D[i][j]*u_k[j];
+				x_hat_new[i]=x_hat_new[i]+(A[i][j]-B[i][1]*K[1][j]-B[i][2]*K[2][j]-B[i][3]*K[3][j]-B[i][4]*K[4][j])*x_hat_k[j];   //State update
+			
 			}
-        }
-        // TO DO: Do state prediction!!
-
+			for(int j=0;j<12;j++)
+			{
+				x_hat_new[i]=x_hat_new[i]+L[i][j]*(y_k[j]-y_hat_k[j]);
+			}
+		}
         //LQR implementation
         float K[4][12];
-        float u[4]; //Input initialize with zeros?
-        float r[12]; //Reference
-        float y[12] = {eulerRollActual,eulerPitchActual,eulerYawActual,...}; //Output
+        float u_k[4]; //Input initialize with zeros?
+        float r_k[12]; //Reference
         for(int i=0;i<4;i++)
         {
         	for(int j=0;j<12;j++)
         	{
-        		u[i]=u[i]+K[i][j]*(r[j]-y[j]);
+        		u_k[i]=u_k[i]+K[i][j]*(r_k[j]-x_hat_new[j]);
 
         	}
         }
