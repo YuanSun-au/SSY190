@@ -47,8 +47,8 @@ static void mode_switcherTask(void* param)
     FREQ = status?10:5;
     status = toggle(status);
     pnt = &FREQ;
-    xQueueSend( xQueue1,( void * ) &pnt, ( TickType_t ) 1000 );
-    xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
+    xQueueSend( xQueue1,( void * ) pnt, ( TickType_t ) 1000 );
+    xQueueSend( xQueue2,( void * ) pnt, ( TickType_t ) 1000 );
       }
     }
 
