@@ -40,7 +40,8 @@ static void controllerTask(void* param)
   while(1)
   {
     //vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until new ref or state estimation
-    xQueueReceive( xQueue1, &( FREQ ),portMAX_DELAY ); // if/else needed?
+    if(xQueueReceive( xQueue1, &( FREQ ),portMAX_DELAY ))
+      { // if/else needed?
     // Get error
     //e=ref-state;
 
@@ -62,9 +63,10 @@ static void controllerTask(void* param)
 
 
     // For this week we just toggle some leds
-    DEBUG_PRINT("--controller got %d\n",FREQ);
-    ledSet(CHG_LED,ledstatus);
-    ledstatus = toggle(ledstatus);
+      DEBUG_PRINT("--controller got %d\n",FREQ);
+      ledSet(CHG_LED,ledstatus);
+      ledstatus = toggle(ledstatus);
+    }
       }
 }
 
