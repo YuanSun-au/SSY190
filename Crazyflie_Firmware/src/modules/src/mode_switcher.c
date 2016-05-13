@@ -8,6 +8,7 @@ or STOP (controller off)
 #include "system.h"
 #include "mode_switcher.h"
 #include "queue.h"
+#include "debug.h"
 
 static bool isInit;
 static int status=0;
@@ -41,6 +42,7 @@ static void mode_switcherTask(void* param)
     // Tell controller we have a new reference (if we have? do we need to?)
 
     // Testing
+    DEBUG_PRINT("--MODE_SW\n");
     FREQ = status?10:5;
     status = toggle(status);
     xQueueSend( xQueue1,( void * ) &FREQ, ( TickType_t ) 1000 );
