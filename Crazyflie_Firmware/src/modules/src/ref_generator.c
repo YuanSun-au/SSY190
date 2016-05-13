@@ -63,7 +63,7 @@ static void ref_generatorTask(void* param)
     // Tell controller we have a new reference (if we have? do we need to?)
 
     // For this week we just toggle some leds
-    //DEBUG_PRINT("ref_gen got message: %d\n",*FREQ);
+    DEBUG_PRINT("ref_gen got message: %d\n",*FREQ);
     //ledSet(CHG_LED,ledstatus);
     //ledstatus = toggle(ledstatus);
 
