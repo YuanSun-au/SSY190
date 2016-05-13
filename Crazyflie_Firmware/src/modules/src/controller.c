@@ -18,7 +18,7 @@ OUT: motor power
 
 static bool isInit;
 static QueueHandle_t* xQueue1;
-static int FREQ;
+int FREQ;
 
 static int toggle(int var){
   return var?0:1;
@@ -62,7 +62,7 @@ static void controllerTask(void* param)
 
 
     // For this week we just toggle some leds
-    //DEBUG_PRINT("--controller--\n");
+    DEBUG_PRINT("--controller got %d\n",FREQ);
     ledSet(CHG_LED,ledstatus);
     ledstatus = toggle(ledstatus);
       }
