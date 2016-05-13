@@ -221,7 +221,7 @@ void systemTask(void *arg)
     //soundSetEffect(SND_STARTUP);
     ledseqRun(SYS_LED, seq_alive);
     ledseqRun(LINK_LED, seq_testPassed);
-    DEBUG_PRINT("Passed SELFTESTS \n")
+    DEBUG_PRINT("Passed SELFTESTS \n");
   }
   else
   {
