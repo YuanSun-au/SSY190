@@ -13,9 +13,8 @@ or STOP (controller off)
 static bool isInit;
 static int status=0;
 int FREQ;
-static QueueHandle_t *xQueue1;
-static QueueHandle_t *xQueue2;
-int* pnt;
+QueueHandle_t *xQueue1;
+QueueHandle_t *xQueue2;
 
 static int toggle(int var){
   return var?0:1;
@@ -46,9 +45,8 @@ static void mode_switcherTask(void* param)
     DEBUG_PRINT("--MODE_SW\n");
     FREQ = status?10:5;
     status = toggle(status);
-    pnt = &FREQ;
-    xQueueSend( xQueue1,( void * ) pnt, ( TickType_t ) 1000 );
-    xQueueSend( xQueue2,( void * ) pnt, ( TickType_t ) 1000 );
+    xQueueSend( xQueue1,( void * ) &FREQ, ( TickType_t ) 1000 );
+    xQueueSend( xQueue2,( void * ) &FREQ, ( TickType_t ) 1000 );
       }
     }
 
