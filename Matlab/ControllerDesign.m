@@ -46,7 +46,8 @@ B(9,1)=1/m;
 C=eye(12);
 
 sys=ss(A,B,C,0);
-
+Ts=1/250; % 250Hz (The example in the quad uses this)
+sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
@@ -55,7 +56,7 @@ Q(10,10)=1;
 Q(11,11)=1;
 Q(end)=1;
 R=eye(4)/10;
-K = lqr(sys,Q,R); % K is the feedback vector
+K = lqr(sysd,Q,R); % K is the feedback vector
 
 %% Kalman design
 A=zeros(12);
@@ -71,6 +72,10 @@ B(6,4)=1/Iz;
 B(9,1)=1/m;
 
 C=eye(12);
+C(1,1)=0; % x is not an output
+C(2,2)=0; % y -||-
+C(4,4)=0 % xdot
+C(5,5)=0 % ydot
 % Values in the quad: 
 % roll,pitch,yaw - from sensor fusion (euler deg)
 % p,q,r - from gyro (deg/s)
