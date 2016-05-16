@@ -24,11 +24,19 @@ Iz = 2.173e-5;
 % % Transformation matrixes
 % R1;   % Rotation used in Newton eq
 % R2;   % Rotation used to transform rpy to w
-% TorqueThrust=[-1, -1, -1, -1;
-%                   0, -d, 0, d;
-%                   d, 0, -d, 0;
-%                   k/b, -k/b, k/b, -k/b]; % generates Thrust(sum) and torque(1,2,3)
-
+%%
+syms d k b;
+ TorqueThrust=[-b, -b, -b, -b;
+                   0, -d*b, 0, d*b;
+                   d*b, 0, -d*b, 0;
+                   k, -k, k, -k]; % generates Thrust(sum) and torque(1,2,3)
+ Rotz=[ 1/sqrt(2) -1/sqrt(2) 0;
+        1/sqrt(2) 1/sqrt(2) 0;
+        0   0   1];
+ newTorque=Rotz*TorqueThrust(2:end,:);
+ Total=[TorqueThrust(1,:);newTorque];
+ Ainv = inv(Total)
+%%
 % Equations
 
 A=zeros(12);
