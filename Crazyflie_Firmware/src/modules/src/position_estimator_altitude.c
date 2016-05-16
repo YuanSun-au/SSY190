@@ -56,6 +56,18 @@ void positionEstimate(estimate_t* estimate, float asl, float dt) {
   positionEstimateInternal(estimate, asl, dt, &state);
 }
 
+
+static void velocityEstimateZInternal(float* estimate,struct state_s* state)
+{
+  *estimate = state->velocityZ;
+}
+void velocityEstimateZ(float* estimate)
+// just returns the estimated speed
+{
+  velocityEstimateZInternal(estimate,&state);
+}
+
+
 void positionUpdateVelocity(float accWZ, float dt) {
   positionUpdateVelocityInternal(accWZ, dt, &state);
 }

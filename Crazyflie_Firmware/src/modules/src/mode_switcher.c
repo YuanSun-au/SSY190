@@ -43,7 +43,7 @@ static void mode_switcherTask(void* param)
     // Tell controller we have a new reference (if we have? do we need to?)
 
     // Testing
-    DEBUG_PRINT("--MODE_SW\n");
+    //DEBUG_PRINT("--MODE_SW\n");
     FREQ = status?10:5;
     status = toggle(status);
     pnt = &FREQ;
