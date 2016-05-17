@@ -39,19 +39,17 @@ syms d k b;
 %%
 % Equations
 
-A=zeros(12);
+A=zeros(8);
 A(1:3,4:6)=eye(3);
-A(7,2)=-g;
-A(8,1)=g;
-A(10:12,7:9)=eye(3);
+A(8,7)=1;
 
-B=zeros(12,4);
+B=zeros(8,4);
 B(4,2)=1/Ix;
 B(5,3)=1/Iy;
 B(6,4)=1/Iz;
-B(9,1)=1/m;
+B(7,1)=1/m;
 
-C=eye(12);
+C=eye(8);
 
 sys=ss(A,B,C,0);
 Ts=1/250; % 250Hz (The example in the quad uses this)
@@ -59,13 +57,10 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=eye(12)*100;
-Q(7,7)=0.001; % x
-Q(8,8)=0.001; % y
-Q(10,10)=0.001;
-Q(11,11)=0.001;
-Q(end)=1;
-R=eye(4)/10;
+Q=diag([10, 10, 0.1,... % r,p,y
+    10, 10, 0.1,... % p,q,r
+    1, 1]); %dz z
+R=eye(4)*10;
 K = lqr(sysd,Q,R); % K is the feedback vector
 
 %% Kalman design

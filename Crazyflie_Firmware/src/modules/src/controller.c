@@ -26,26 +26,31 @@ OUT: motor power
 #include "pm.h"
 #include "commander.h"
 
-#define Nstates 12
+#define Nstates 8
 #define Ninputs 4
 
 
+#define ATTITUDE_UPDATE_RATE_DIVIDER  2
+#define ATTITUDE_UPDATE_DT  (float)(1.0 / (IMU_UPDATE_FREQ / ATTITUDE_UPDATE_RATE_DIVIDER)) // 250hz
+
 static float K[Ninputs][Nstates] =
 {
-{-0.0000000000,0.0000000000,-0.0000000000,-0.0000000000,0.0000000000,-0.0000000000,-0.0000000000,-0.0000000000,6.4690507959,-0.0000000000,-0.0000000000,0.6466351359},
-{0.0043492264,-0.0000000000,0.0000000000,0.0034961958,-0.0000000000,0.0000000000,0.0000000000,0.0000993754,-0.0000000000,-0.0000000000,0.0000110009,-0.0000000000},
-{-0.0000000000,0.0044770532,-0.0000000000,-0.0000000000,0.0035989514,-0.0000000000,-0.0001022962,-0.0000000000,0.0000000000,-0.0000113243,-0.0000000000,0.0000000000},
-{0.0000000000,-0.0000000000,0.0054216565,0.0000000000,-0.0000000000,0.0054433432,0.0000000000,0.0000000000,-0.0000000000,0.0000000000,0.0000000000,-0.0000000000},
+  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.3342253953,0.3083142032},
+  {0.0034804966,-0.0000000000,-0.0000000000,0.0034944187,-0.0000000000,-0.0000000000,0.0000000000,0.0000000000},
+  {-0.0000000000,0.0035827882,-0.0000000000,-0.0000000000,0.0035971195,-0.0000000000,0.0000000000,0.0000000000},
+  {-0.0000000000,-0.0000000000,0.0054057501,-0.0000000000,-0.0000000000,0.0054274366,0.0000000000,0.0000000000},
 };
 
-static float b=0.000000001; // insert values here...
-static float k=0.0000000000275; // insert values here...
+static float b=0.000000001;
+static float k=0.0000000000275;
+//static float b=1; // insert values here...
+//static float k=1; // insert values here...
 static float d=0.05; // insert values here...
 estimate_t pos;
 float speedZ;
-static float eulerRollActual;   // Measured roll angle in deg
-static float eulerPitchActual;  // Measured pitch angle in deg
-static float eulerYawActual;    // Measured yaw angle in deg
+static float eulerRollActual_s;   // Measured roll angle in deg
+static float eulerPitchActual_s;  // Measured pitch angle in deg
+static float eulerYawActual_s;    // Measured yaw angle in deg
 
 static bool isInit;
 extern QueueHandle_t xQueue1;
@@ -60,8 +65,8 @@ static Axis3f acc;  // Accelerometer axis data in mG
 static Axis3f mag;  // Magnetometer axis data in testla
 
 float u[Ninputs];
-float x[Nstates] = {0,0,0,0,0,0,0,0,0,0,0,0};
-float ref[Nstates] = {0,0,0,0,0,0,0,0,0,0,0,0};
+float x[Nstates] = {0,0,0,0,0,0,0,0};
+float ref[Nstates] = {0,0,0,0,0,0,0,0};
 static float u_k[Ninputs];
 static float thrusts[Ninputs];
 
@@ -101,6 +106,7 @@ thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs
 static void controllerTask(void* param)
 {
   uint32_t lastWakeTime;
+  uint32_t attitudeCounter = 0;
 
 //  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR); // What is this?
 
@@ -121,17 +127,19 @@ static void controllerTask(void* param)
       // Get ref and sensor
       // ref comes in a queue from ref_generator
       // todo: make REF into a vector
+      if (++attitudeCounter >= ATTITUDE_UPDATE_RATE_DIVIDER)
+      {
 
-      sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, 1/IMU_UPDATE_FREQ);
-      sensfusion6GetEulerRPY(&eulerRollActual, &eulerPitchActual, &eulerYawActual);
+      sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
+      sensfusion6GetEulerRPY(&eulerRollActual_s, &eulerPitchActual_s, &eulerYawActual_s);
       positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
       positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
-      velocityEstimateZ(&x[1]); //x6 = dotZ?
-      x[8]=pos.position.z;
+      velocityEstimateZ(&x[7]); //x6 = dotZ?
+      x[6]=pos.position.z;
 
-      x[0]=eulerRollActual;
-      x[1]=eulerPitchActual;
-      x[2]=eulerYawActual;
+      x[0]=eulerRollActual_s;
+      x[1]=eulerPitchActual_s;
+      x[2]=eulerYawActual_s;
       x[3]=gyro.x;
       x[4]=gyro.y;
       x[5]=gyro.z;
@@ -154,7 +162,8 @@ static void controllerTask(void* param)
 
       // DEBUG
     //  DEBUG_PRINT("Controller debug");
-
+    attitudeCounter = 0;
+  }
     }
   }
 }
@@ -189,12 +198,11 @@ bool controllerTest(void)
   return pass;
 }
 
-LOG_GROUP_START(stabilizer)
-LOG_ADD(LOG_FLOAT, roll, &eulerRollActual)
-LOG_ADD(LOG_FLOAT, pitch, &eulerPitchActual)
-LOG_ADD(LOG_FLOAT, yaw, &eulerYawActual)
-//LOG_ADD(LOG_UINT16, thrust, &ThrustVector[0])
-LOG_GROUP_STOP(stabilizer)
+LOG_GROUP_START(ctrl_rpy)
+LOG_ADD(LOG_FLOAT, roll, &eulerRollActual_s)
+LOG_ADD(LOG_FLOAT, pitch, &eulerPitchActual_s)
+LOG_ADD(LOG_FLOAT, yaw, &eulerYawActual_s)
+LOG_GROUP_STOP(ctrl_rpy)
 
 LOG_GROUP_START(acc)
 LOG_ADD(LOG_FLOAT, x, &acc.x)
