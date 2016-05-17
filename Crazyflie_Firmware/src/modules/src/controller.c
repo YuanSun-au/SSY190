@@ -23,6 +23,9 @@ OUT: motor power
 #include "position_estimator.h"
 #include "log.h"
 
+#include "pm.h"
+#include "commander.h"
+
 #define Nstates 12
 #define Ninputs 4
 
@@ -57,19 +60,18 @@ static Axis3f mag;  // Magnetometer axis data in testla
 float u[Ninputs];
 float x[Nstates] = {0,0,0,0,0,0,0,0,0,0,0,0};
 float ref[Nstates] = {0,0,0,0,0,0,0,0,0,0,0,0};
-float* inputs; // pointer to array! try to remake this in a smart way
-float* ThrustVector; // pointer to array! try to remake this in a smart way
+static float u_k[Ninputs];
+static float thrusts[Ninputs];
 
 static uint16_t limitThrust(int32_t value)
 {
   return limitUint16(value);
 }
 
-static float* ctrlCalc(float ref[Nstates],float states[Nstates])
+static void ctrlCalc(float ref[Nstates],float states[Nstates])
 // Calculates control signal given states and state references
 // must return a pointer
 {
-  static float u_k[Ninputs];
   int i;
   for(i=0;i<Ninputs;i++)
   {
@@ -80,20 +82,16 @@ static float* ctrlCalc(float ref[Nstates],float states[Nstates])
       u_k[i]=K[i][j]*(ref[j]-states[j]);
     }
   }
-  return u_k;
 }
 
-static float* Torque2Thrust(float inputs[Ninputs])
+static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
-  static float thrusts[Ninputs];
   //predefine b,d,k
 thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] + 1.4142/(4*b*d)*inputs[2] + 1/(4*k)*inputs[3];
 thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
 thrusts[2] = -1/(4*b)*inputs[0] + 1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] + 1/(4*k)*inputs[3];
 thrusts[3] = -1/(4*b)*inputs[0] + 1.4142/(4*b*d)*inputs[1] + 1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
-
-  return thrusts;
 }
 
 static void controllerTask(void* param)
@@ -134,20 +132,20 @@ static void controllerTask(void* param)
       x[11]=gyro.z;
 
       // Calculate input (T,tx,ty,tz)
-      inputs = ctrlCalc(ref, x); // Do not redefine...
+      ctrlCalc(ref, x); // Do not redefine...
 
       // Translate from (T,tx,ty,tz) to motorPowerMi
-      ThrustVector = Torque2Thrust(inputs);
+      Torque2Thrust(u_k);
 
-      motorPowerM1 = limitThrust(ThrustVector[0]);
-      motorPowerM2 = limitThrust(ThrustVector[1]);
-      motorPowerM3 = limitThrust(ThrustVector[2]);
-      motorPowerM4 = limitThrust(ThrustVector[3]);
+      motorPowerM1 = limitThrust((uint32_t)thrusts[0]);
+      motorPowerM2 = limitThrust((uint32_t)thrusts[1]);
+      motorPowerM3 = limitThrust((uint32_t)thrusts[2]);
+      motorPowerM4 = limitThrust((uint32_t)thrusts[3]);
 
       motorsSetRatio(MOTOR_M1, motorPowerM1);
-      motorsSetRatio(MOTOR_M1, motorPowerM1);
-      motorsSetRatio(MOTOR_M1, motorPowerM1);
-      motorsSetRatio(MOTOR_M1, motorPowerM1);
+      motorsSetRatio(MOTOR_M2, motorPowerM2);
+      motorsSetRatio(MOTOR_M3, motorPowerM3);
+      motorsSetRatio(MOTOR_M4, motorPowerM4);
 
       // DEBUG
     //  DEBUG_PRINT("Controller debug");
@@ -190,7 +188,7 @@ LOG_GROUP_START(stabilizer)
 LOG_ADD(LOG_FLOAT, roll, &eulerRollActual)
 LOG_ADD(LOG_FLOAT, pitch, &eulerPitchActual)
 LOG_ADD(LOG_FLOAT, yaw, &eulerYawActual)
-LOG_ADD(LOG_UINT16, thrust, &ThrustVector)
+//LOG_ADD(LOG_UINT16, thrust, &ThrustVector[0])
 LOG_GROUP_STOP(stabilizer)
 
 LOG_GROUP_START(acc)
@@ -217,7 +215,3 @@ LOG_ADD(LOG_INT32, m1, &motorPowerM1)
 LOG_ADD(LOG_INT32, m2, &motorPowerM2)
 LOG_ADD(LOG_INT32, m3, &motorPowerM3)
 LOG_GROUP_STOP(motor)
-
-LOG_GROUP_START(userx)
-LOG_ADD(LOG_FLOAT,x9,&x[9])
-LOG_GROUP_STOP(userx)
