@@ -32,13 +32,15 @@ OUT: motor power
 
 static float K[Ninputs][Nstates] =
 {
-{0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,6.4690507959,0.0000000000,0.0000000000,0.6466351359},
-{0.0161735793,0.0000000000,0.0000000000,0.0035197525,0.0000000000,0.0000000000,0.0000000000,0.0036164069,0.0000000000,0.0000000000,0.0003455295,0.0000000000},
-{0.0000000000,0.0166489318,0.0000000000,0.0000000000,0.0036232004,0.0000000000,-0.0037226955,0.0000000000,0.0000000000,-0.0003556848,0.0000000000,0.0000000000},
-{0.0000000000,0.0000000000,0.0054216565,0.0000000000,0.0000000000,0.0054433432,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000},
+{-0.0000000000,0.0000000000,-0.0000000000,-0.0000000000,0.0000000000,-0.0000000000,-0.0000000000,-0.0000000000,6.4690507959,-0.0000000000,-0.0000000000,0.6466351359},
+{0.0043492264,-0.0000000000,0.0000000000,0.0034961958,-0.0000000000,0.0000000000,0.0000000000,0.0000993754,-0.0000000000,-0.0000000000,0.0000110009,-0.0000000000},
+{-0.0000000000,0.0044770532,-0.0000000000,-0.0000000000,0.0035989514,-0.0000000000,-0.0001022962,-0.0000000000,0.0000000000,-0.0000113243,-0.0000000000,0.0000000000},
+{0.0000000000,-0.0000000000,0.0054216565,0.0000000000,-0.0000000000,0.0054433432,0.0000000000,0.0000000000,-0.0000000000,0.0000000000,0.0000000000,-0.0000000000},
 };
 
-static float b,d,k; // insert values here...
+static float b=0.01; // insert values here...
+static float k=0.001; // insert values here...
+static float d=0.01; // insert values here...
 estimate_t pos;
 float speedZ;
 static float eulerRollActual;   // Measured roll angle in deg
@@ -123,14 +125,15 @@ static void controllerTask(void* param)
       sensfusion6GetEulerRPY(&eulerRollActual, &eulerPitchActual, &eulerYawActual);
       positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
       positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
-      velocityEstimateZ(&x[5]); //x6 = dotZ?
-      x[2]=pos.position.z;
-      x[6]=eulerRollActual;
-      x[7]=eulerPitchActual;
-      x[8]=eulerYawActual;
-      x[9]=gyro.x;
-      x[10]=gyro.y;
-      x[11]=gyro.z;
+      velocityEstimateZ(&x[1]); //x6 = dotZ?
+      x[8]=pos.position.z;
+
+      x[0]=eulerRollActual;
+      x[1]=eulerPitchActual;
+      x[2]=eulerYawActual;
+      x[3]=gyro.x;
+      x[4]=gyro.y;
+      x[5]=gyro.z;
 
       // Calculate input (T,tx,ty,tz)
       ctrlCalc(ref, x); // Do not redefine...
