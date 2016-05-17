@@ -23,6 +23,8 @@ OUT: motor power
 #include "position_estimator.h"
 #include "log.h"
 
+#include "param.h"
+
 #include "pm.h"
 #include "commander.h"
 
@@ -35,14 +37,14 @@ OUT: motor power
 
 static float K[Ninputs][Nstates] =
 {
-  {0.0000000000,0.0000000000,-0.0000000000,0.0000000000,0.0000000000,-0.0000000000,0.0252708316,0.0099812781},
-  {0.0034392060,-0.0000000000,-0.0000000000,0.0034531278,-0.0000000000,-0.0000000000,0.0000000000,0.0000000000},
-  {0.0000000000,0.0035378118,-0.0000000000,0.0000000000,0.0035521428,0.0000000000,0.0000000000,0.0000000000},
-  {-0.0000000000,-0.0000000000,0.0009103849,-0.0000000000,-0.0000000000,0.0009318615,-0.0000000000,-0.0000000000},
+  {0.0000000073,-0.0000000015,0.0000000000,0.0000000000,-0.0000000000,0.0000000000,6.7330561776,6.7061103133},
+  {0.1037243307,0.0000000000,0.0000000000,0.0036949487,0.0000000000,0.0000000000,0.0000000000,0.0000000000},
+  {0.0000000000,0.1067728594,0.0000000000,0.0000000000,0.0038035457,0.0000000000,0.0000000000,0.0000000000},
+  {0.0000000000,0.0000000000,0.0054216551,0.0000000000,0.0000000000,0.0054433417,0.0000000000,0.0000000000},
 };
 
 static float b=0.001;
-static float k=0.0275;
+static float k=0.1;
 //static float b=1; // insert values here...
 //static float k=1; // insert values here...
 static float d=0.05; // insert values here...
@@ -96,10 +98,10 @@ static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
   //predefine b,d,k
-thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
-thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
+thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
+thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
+thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
+thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
 
 }
 
@@ -239,3 +241,8 @@ LOG_ADD(LOG_FLOAT, u2, &u_k[1])
 LOG_ADD(LOG_FLOAT, u3, &u_k[2])
 LOG_ADD(LOG_FLOAT, u4, &u_k[3])
 LOG_GROUP_STOP(thrusts_s)
+
+PARAM_GROUP_START(controllerr)
+PARAM_ADD(PARAM_FLOAT, b, &b)
+PARAM_ADD(PARAM_FLOAT, k, &k)
+PARAM_GROUP_STOP(controllerr)
