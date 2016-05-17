@@ -184,6 +184,8 @@ void systemTask(void *arg)
   commInit();
   commanderInit();
   stabilizerInit();
+  xQueue1 = xQueueCreate( 1, sizeof( int* ) );
+  xQueue2 = xQueueCreate( 1, sizeof( int* ) );
   mode_switcherInit(&xQueue1,&xQueue2);
   controllerInit(&xQueue1);
   ref_generatorInit(&xQueue2);

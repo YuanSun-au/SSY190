@@ -40,7 +40,11 @@ static void controllerTask(void* param)
   while(1)
   {
     //vTaskDelayUntil(&lastWakeTime, F2T(*FREQ)); // delay until new ref or state estimation
+<<<<<<< HEAD
     if(xQueueReceive( xQueue1,&(FREQ),( TickType_t ) 1000 ))
+=======
+    if(xQueueReceive( *xQueue1, &( FREQ ),( TickType_t ) 1000 ))
+>>>>>>> origin/Sem2Queue
       { // if/else needed?
     // Get error
     //e=ref-state;
