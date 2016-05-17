@@ -35,14 +35,14 @@ OUT: motor power
 
 static float K[Ninputs][Nstates] =
 {
-  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.3342253953,0.3083142032},
-  {0.0034804966,-0.0000000000,-0.0000000000,0.0034944187,-0.0000000000,-0.0000000000,0.0000000000,0.0000000000},
-  {-0.0000000000,0.0035827882,-0.0000000000,-0.0000000000,0.0035971195,-0.0000000000,0.0000000000,0.0000000000},
-  {-0.0000000000,-0.0000000000,0.0054057501,-0.0000000000,-0.0000000000,0.0054274366,0.0000000000,0.0000000000},
+  {0.0000000000,0.0000000000,-0.0000000000,0.0000000000,0.0000000000,-0.0000000000,0.0252708316,0.0099812781},
+  {0.0034392060,-0.0000000000,-0.0000000000,0.0034531278,-0.0000000000,-0.0000000000,0.0000000000,0.0000000000},
+  {0.0000000000,0.0035378118,-0.0000000000,0.0000000000,0.0035521428,0.0000000000,0.0000000000,0.0000000000},
+  {-0.0000000000,-0.0000000000,0.0009103849,-0.0000000000,-0.0000000000,0.0009318615,-0.0000000000,-0.0000000000},
 };
 
-static float b=0.000000001;
-static float k=0.0000000000275;
+static float b=0.001;
+static float k=0.0275;
 //static float b=1; // insert values here...
 //static float k=1; // insert values here...
 static float d=0.05; // insert values here...
@@ -96,10 +96,10 @@ static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
   //predefine b,d,k
-thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
-thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
+thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
+thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
+thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
+thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
 
 }
 
@@ -134,8 +134,8 @@ static void controllerTask(void* param)
       sensfusion6GetEulerRPY(&eulerRollActual_s, &eulerPitchActual_s, &eulerYawActual_s);
       positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
       positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
-      velocityEstimateZ(&x[7]); //x6 = dotZ?
-      x[6]=pos.position.z;
+      velocityEstimateZ(&x[6]); //x6 = dotZ?
+      x[7]=pos.position.z;
 
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
@@ -150,10 +150,10 @@ static void controllerTask(void* param)
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);
 
-      motorPowerM1 = limitThrust((uint32_t)thrusts[0]);
-      motorPowerM2 = limitThrust((uint32_t)thrusts[1]);
-      motorPowerM3 = limitThrust((uint32_t)thrusts[2]);
-      motorPowerM4 = limitThrust((uint32_t)(thrusts[3]));
+      motorPowerM1 = limitThrust(thrusts[0]);
+      motorPowerM2 = limitThrust(thrusts[1]);
+      motorPowerM3 = limitThrust(thrusts[2]);
+      motorPowerM4 = limitThrust(thrusts[3]);
 
       motorsSetRatio(MOTOR_M1, motorPowerM1);
       motorsSetRatio(MOTOR_M2, motorPowerM2);
@@ -230,10 +230,10 @@ LOG_ADD(LOG_INT32, m3, &motorPowerM3)
 LOG_GROUP_STOP(motor)
 
 LOG_GROUP_START(thrusts_s)
-LOG_ADD(LOG_FLOAT, t4, &thrusts[0])
-LOG_ADD(LOG_FLOAT, t1, &thrusts[1])
-LOG_ADD(LOG_FLOAT, t2, &thrusts[2])
-LOG_ADD(LOG_FLOAT, t3, &thrusts[3])
+LOG_ADD(LOG_FLOAT, t1, &thrusts[0])
+LOG_ADD(LOG_FLOAT, t2, &thrusts[1])
+LOG_ADD(LOG_FLOAT, t3, &thrusts[2])
+LOG_ADD(LOG_FLOAT, t4, &thrusts[3])
 LOG_ADD(LOG_FLOAT, u1, &u_k[0])
 LOG_ADD(LOG_FLOAT, u2, &u_k[1])
 LOG_ADD(LOG_FLOAT, u3, &u_k[2])

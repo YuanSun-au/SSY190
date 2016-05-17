@@ -57,11 +57,11 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=diag([10, 10, 0.1,... % r,p,y
-    10, 10, 0.1,... % p,q,r
+Q=diag([10, 10, 0.01,... % r,p,y
+    10, 10, 0.01,... % p,q,r
     1, 1]); %dz z
-R=eye(4)*10;
-K = lqr(sysd,Q,R); % K is the feedback vector
+R=eye(4)*1e6;
+K = lqr(sys,Q,R); % K is the feedback vector
 
 %% Kalman design
 A=zeros(12);
