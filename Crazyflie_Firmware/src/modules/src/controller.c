@@ -76,10 +76,11 @@ static void ctrlCalc(float ref[Nstates],float states[Nstates])
   for(i=0;i<Ninputs;i++)
   {
     int j;
+    u_k[i]=0;
     for(j=0;j<Nstates;j++)
     {
       //u_k[i]=u_k[i]+K[i][j]*(ref[j]-states[j]);
-      u_k[i]=K[i][j]*(ref[j]-states[j]);
+      u_k[i]=u_k[i] + K[i][j]*(ref[j]-states[j]);
     }
   }
 }
@@ -140,7 +141,7 @@ static void controllerTask(void* param)
       motorPowerM1 = limitThrust((uint32_t)thrusts[0]);
       motorPowerM2 = limitThrust((uint32_t)thrusts[1]);
       motorPowerM3 = limitThrust((uint32_t)thrusts[2]);
-      motorPowerM4 = limitThrust((uint32_t)thrusts[3]);
+      motorPowerM4 = limitThrust((uint32_t)(thrusts[3]));
 
       motorsSetRatio(MOTOR_M1, motorPowerM1);
       motorsSetRatio(MOTOR_M2, motorPowerM2);
@@ -215,3 +216,14 @@ LOG_ADD(LOG_INT32, m1, &motorPowerM1)
 LOG_ADD(LOG_INT32, m2, &motorPowerM2)
 LOG_ADD(LOG_INT32, m3, &motorPowerM3)
 LOG_GROUP_STOP(motor)
+
+LOG_GROUP_START(thrusts_s)
+LOG_ADD(LOG_FLOAT, t4, &thrusts[0])
+LOG_ADD(LOG_FLOAT, t1, &thrusts[1])
+LOG_ADD(LOG_FLOAT, t2, &thrusts[2])
+LOG_ADD(LOG_FLOAT, t3, &thrusts[3])
+LOG_ADD(LOG_FLOAT, u1, &u_k[0])
+LOG_ADD(LOG_FLOAT, u2, &u_k[1])
+LOG_ADD(LOG_FLOAT, u3, &u_k[2])
+LOG_ADD(LOG_FLOAT, u4, &u_k[3])
+LOG_GROUP_STOP(thrusts_s)
