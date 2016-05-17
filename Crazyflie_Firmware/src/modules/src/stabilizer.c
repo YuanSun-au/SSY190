@@ -23,6 +23,7 @@
  *
  *
  */
+ /*
 #include <math.h>
 
 #include "FreeRTOS.h"
@@ -56,6 +57,7 @@
  * Defines in what divided update rate should the attitude
  * control loop run relative the rate control loop.
  */
+ /*
 #define ATTITUDE_UPDATE_RATE_DIVIDER  2
 #define ATTITUDE_UPDATE_DT  (float)(1.0 / (IMU_UPDATE_FREQ / ATTITUDE_UPDATE_RATE_DIVIDER)) // 250hz
 
@@ -197,3 +199,4 @@ LOG_GROUP_STOP(motor)
 PARAM_GROUP_START(zacc)
 PARAM_ADD(PARAM_FLOAT, zacc, &zacc_base)
 PARAM_GROUP_STOP(zacc)
+*/

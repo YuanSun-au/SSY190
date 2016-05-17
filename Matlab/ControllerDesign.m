@@ -30,8 +30,8 @@ syms d k b;
                    0, -d*b, 0, d*b;
                    d*b, 0, -d*b, 0;
                    k, -k, k, -k]; % generates Thrust(sum) and torque(1,2,3)
- Rotz=[ cosd(-45) -sind(-45) 0;
-        sind(-45) cosd(-45) 0;
+ Rotz=[ cosd(45) -sind(45) 0;
+        sind(45) cosd(45) 0;
         0   0   1];
  newTorque=Rotz*TorqueThrust(2:end,:);
  Total=[TorqueThrust(1,:);newTorque];

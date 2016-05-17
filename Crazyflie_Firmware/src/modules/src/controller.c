@@ -38,9 +38,9 @@ static float K[Ninputs][Nstates] =
 {0.0000000000,-0.0000000000,0.0054216565,0.0000000000,-0.0000000000,0.0054433432,0.0000000000,0.0000000000,-0.0000000000,0.0000000000,0.0000000000,-0.0000000000},
 };
 
-static float b=0.01; // insert values here...
-static float k=0.001; // insert values here...
-static float d=0.01; // insert values here...
+static float b=0.000000001; // insert values here...
+static float k=0.0000000000275; // insert values here...
+static float d=0.05; // insert values here...
 estimate_t pos;
 float speedZ;
 static float eulerRollActual;   // Measured roll angle in deg
@@ -91,10 +91,11 @@ static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
   //predefine b,d,k
-thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] + 1.4142/(4*b*d)*inputs[2] + 1/(4*k)*inputs[3];
+thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
 thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
-thrusts[2] = -1/(4*b)*inputs[0] + 1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] + 1/(4*k)*inputs[3];
-thrusts[3] = -1/(4*b)*inputs[0] + 1.4142/(4*b*d)*inputs[1] + 1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
+thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
+thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
+
 }
 
 static void controllerTask(void* param)
