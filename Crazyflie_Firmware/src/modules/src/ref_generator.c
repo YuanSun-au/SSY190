@@ -83,19 +83,19 @@ static float ref_generatorSetAngle (float value)
   }
 }
 
-static float ref_generatorSetZ (uint16_t thrust)
-{
-// returns a speed in Z of +0.05 or -0.05 if the commander input is positive, repectively negative
-  if (thrust < -5) {
-    return -Z_SPEED;
-  }
-  else if (thrust > 5) {
-    return Z_SPEED;
-  }
-  else {
-    return 0;
-  }
-}
+// static float ref_generatorSetZ (uint16_t thrust)
+// {
+// // returns a speed in Z of +0.05 or -0.05 if the commander input is positive, repectively negative
+//   if (thrust < -5) {
+//     return -Z_SPEED;
+//   }
+//   else if (thrust > 5) {
+//     return Z_SPEED;
+//   }
+//   else {
+//     return 0;
+//   }
+// }
 
 // NOT A PERMANENT FUNCTION --> NEEDS TO BE CHANGED / DELETED
 float ref_generatorSetZThrust (uint16_t thrust)
