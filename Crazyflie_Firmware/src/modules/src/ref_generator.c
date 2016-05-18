@@ -20,7 +20,7 @@ OUT: reference to controller
 #include "log.h"
 #include "debug.h"
 
-#define ANGLE 80;
+#define ANGLE 20;
 //#define Z_SPEED 10;
 
 static bool isInit;
@@ -72,10 +72,10 @@ static void ref_generatorTask(void* param)
 static float ref_generatorSetAngle (float value)
 {
 // returns an angle of +1 degree or -1 degree, if the commander input is positive, respectively negative
-  if (value < -5) {
+  if (value < -10) {
     return -ANGLE;
   }
-  else if (value > 5) {
+  else if (value > 10) {
     return ANGLE;
   }
   else {

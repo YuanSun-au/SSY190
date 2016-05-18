@@ -44,8 +44,8 @@ static float K[Ninputs][Nstates] =
   {0.0000000000,0.0000000000,0.0054200576,0.0000000000,0.0000000000,0.0054417442,0.0000000000,0.0000000000},
 };
 
-static float b=0.001;
-static float k=0.1;
+static float b=0.0001;
+static float k=0.00000275;
 //static float b=1; // insert values here...
 //static float k=1; // insert values here...
 static float d=0.05; // insert values here...
