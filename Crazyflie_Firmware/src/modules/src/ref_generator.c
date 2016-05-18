@@ -118,11 +118,11 @@ void ref_generatorExtIn (float* xRef)
   xRef[0]=ref_generatorSetAngle(rollRef);
   xRef[1]=ref_generatorSetAngle(pitchRef);
   xRef[2]=0; // yaw always zero  --> might still be changed if desired
-  xRef[3]=0;
+  xRef[3]=0; // we might not need these since they always are 0
   xRef[4]=0;
   xRef[5]=0;
-  xRef[6]=ref_generatorSetZ(thrust);
-  xRef[7]=0;
+  xRef[6]=0;//ref_generatorSetZ(thrust);
+  xRef[7]=ref_generatorSetZ(thrust);
 }
 
 /* Loggable variables */
