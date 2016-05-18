@@ -10,11 +10,15 @@ or STOP (controller off)
 #include "queue.h"
 #include "debug.h"
 
+#define Nstates 8
+
 static bool isInit;
 static int status=0;
-int FREQ;
+float ref_mode[Nstates] = {0,0,0,0,0,0,0,0};
 extern QueueHandle_t xQueue1;
+float* float_ref_pnt;
 extern QueueHandle_t xQueue2;
+int FREQ;
 int* pnt;
 
 static int toggle(int var){
@@ -47,8 +51,9 @@ static void mode_switcherTask(void* param)
     FREQ = status?10:5;
     status = toggle(status);
     pnt = &FREQ;
-    xQueueSend( xQueue1,( void * ) &pnt, ( TickType_t ) 1000 );
-    xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
+    float_ref_pnt = ref_mode;
+    xQueueSend( xQueue1,( void * ) &float_ref_pnt, ( TickType_t ) 1000 );
+    //xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
       }
     }
 
