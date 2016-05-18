@@ -97,6 +97,7 @@ closed_poles=eig(A-B*K)
 % Test on linear plant
 
 %% pretty outputs
+K=lqi(sysd,[Q,zeros(8,8);zeros(8,8),0.1*Q],R);
 
 fb=fopen('feedback.txt','w');
 

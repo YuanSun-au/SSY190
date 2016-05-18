@@ -35,12 +35,12 @@ OUT: motor power
 #define ATTITUDE_UPDATE_RATE_DIVIDER  2
 #define ATTITUDE_UPDATE_DT  (float)(1.0 / (IMU_UPDATE_FREQ / ATTITUDE_UPDATE_RATE_DIVIDER)) // 250hz
 
-static float K[Ninputs][Nstates] =
+static float K[Ninputs][2*Nstates] =
 {
-  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.3342253953,0.3083142032},
-  {0.0034804966,0.0000000000,0.0000000000,0.0034944187,0.0000000000,0.0000000000,0.0000000000,0.0000000000},
-  {0.0000000000,0.0035827882,0.0000000000,0.0000000000,0.0035971195,0.0000000000,0.0000000000,0.0000000000},
-  {0.0000000000,0.0000000000,0.0054200576,0.0000000000,0.0000000000,0.0054417442,0.0000000000,0.0000000000},
+  {0.0000003571,0.0000003693,0.0000030538,-0.0000000007,-0.0000000007,-0.0000000061,0.3424464060,0.4139014653,-0.0000000000,0.0000000000,0.0000000000,0.0000003570,0.0000003690,0.0000030538,-0.0000162029,-0.0974366323},
+  {0.0045848282,0.0000000034,0.0000000051,0.0034966187,-0.0000000000,-0.0000000000,0.0000000001,-0.0000000301,-0.0010999338,-0.0000000000,-0.0000000000,-0.0000000020,0.0000000034,0.0000000051,-0.0000000301,-0.0000000000},
+  {-0.0000000502,0.0047195244,-0.0000000589,0.0000000001,0.0035993842,0.0000000001,-0.0000000007,0.0000003555,-0.0000000000,-0.0011322608,0.0000000000,-0.0000000502,-0.0000000536,-0.0000000589,0.0000003555,0.0000000000},
+  {0.0000002454,0.0000001064,0.0071397847,-0.0000000005,-0.0000000002,0.0054451720,0.0000000003,-0.0000001475,-0.0000000000,-0.0000000000,-0.0017128890,0.0000002454,0.0000001064,-0.0000000155,-0.0000001475,-0.0000000000},
 };
 
 static float b=0.001;
@@ -58,6 +58,7 @@ static float eulerYawActual_s;    // Measured yaw angle in deg
 static bool isInit;
 extern QueueHandle_t xQueue1;
 int* REF;
+static uint16_t reset_I=1;
 
 uint32_t motorPowerM1;  // Motor 1 power output (16bit value used: 0 - 65535)
 uint32_t motorPowerM2;  // Motor 2 power output (16bit value used: 0 - 65535)
@@ -70,6 +71,7 @@ static Axis3f mag;  // Magnetometer axis data in testla
 float u[Ninputs];
 float x[Nstates] = {0,0,0,0,0,0,0,0};
 float ref[Nstates] = {0,0,0,0,0,0,0,0};
+float xi[Nstates] = {0,0,0,0,0,0,0,0};
 static float u_k[Ninputs];
 static float thrusts[Ninputs];
 
@@ -78,7 +80,7 @@ static uint16_t limitThrust(int32_t value)
   return limitUint16(value);
 }
 
-static void ctrlCalc(float ref[Nstates],float states[Nstates])
+static void ctrlCalc(float states[2*Nstates])
 // Calculates control signal given states and state references
 // must return a pointer
 {
@@ -87,10 +89,10 @@ static void ctrlCalc(float ref[Nstates],float states[Nstates])
   {
     int j;
     u_k[i]=0;
-    for(j=0;j<Nstates;j++)
+    for(j=0;j<2*Nstates;j++)
     {
       //u_k[i]=u_k[i]+K[i][j]*(ref[j]-states[j]);
-      u_k[i]=u_k[i] + K[i][j]*(ref[j]-states[j]);
+      u_k[i]=u_k[i] - K[i][j]*(states[j]);
     }
   }
 }
@@ -124,7 +126,7 @@ static void controllerTask(void* param)
 
     imu9Read(&gyro, &acc, &mag);
 
-    xQueueReceive( xQueue1, &(ref),( TickType_t ) 1 );
+    //xQueueReceive( xQueue1, &(ref),( TickType_t ) 1 );
 
     if( imu6IsCalibrated() )
     { // if/else needed?
@@ -148,8 +150,28 @@ static void controllerTask(void* param)
       x[4]=-gyro.y;
       x[5]=-gyro.z;
 
+      // Integrator states
+      float limPos = 1000;
+      float limNeg = -1000;
+      int i;
+      for(i=0;i<Nstates;i++)
+      {
+        xi[i]+=ref[i]-x[i];
+        if(reset_I)
+          xi[i]=0;
+
+        if(xi[i]>limPos)
+        {
+          xi[i]=limPos;
+        }else if(xi[i]<limNeg)
+        {
+          xi[i]=limNeg;
+        }
+      }
+
       // Calculate input (T,tx,ty,tz)
-      ctrlCalc(ref, x); // Do not redefine...
+      float xxi[2*Nstates] = {x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],xi[0],xi[1],xi[2],xi[3],xi[4],xi[5],xi[6],xi[7]};
+      ctrlCalc(xxi); // Do not redefine...
 
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);
@@ -248,4 +270,5 @@ PARAM_GROUP_START(controllerr)
 PARAM_ADD(PARAM_FLOAT, b, &b)
 PARAM_ADD(PARAM_FLOAT, k, &k)
 PARAM_ADD(PARAM_FLOAT, base_thrust, &baseThrust)
+PARAM_ADD(PARAM_INT16, resInt, &reset_I)
 PARAM_GROUP_STOP(controllerr)
