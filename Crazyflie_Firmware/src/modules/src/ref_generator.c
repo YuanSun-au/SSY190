@@ -65,6 +65,28 @@ static void ref_generatorTask(void* param)
       }
 }
 
+static float ref_generatorSetAngle (float value)
+{
+// returns an angle of +1 degree or -1 degree, if the commander input is positive, respectively negative
+  if value < 0
+    return -1;
+  if value > 0
+    return 1;
+  else
+    return 0;
+}
+
+static float ref_generatorSetZ (uint16_t thrust)
+{
+// returns a speed in Z of +0.05 or -0.05 if the commander input is positive, repectively negative
+  if thrust < 0
+    return -0.05;
+  if thrust > 0
+    return 0.05;
+  else
+    return 0;
+}
+
 void ref_generatorInit(void)
 {
   if(isInit)
@@ -82,6 +104,22 @@ void ref_generatorInit(void)
 bool ref_generatorTest(void)
 {
   return true;
+}
+
+
+void ref_generatorExtIn (float* xRef)
+{
+  float rollRef, pitchRef, yawRef;
+  uint16_t thrust = 0;
+  xRef = {0,0,0,0,0,0,0,0};
+
+  commanderGetRPY (&rollRef, &pitchRef, &yawRef);
+  commanderGetThrust (&thrust);
+
+  xRef[0]=ref_generatorSetAngle(rollRef);
+  xRef[1]=ref_generatorSetAngle(pitchRef);
+  // yaw always 0
+  xRef[6]=ref_generatorSetZ(thrust);
 }
 
 /* Loggable variables */
