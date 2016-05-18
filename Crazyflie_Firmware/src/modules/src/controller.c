@@ -37,10 +37,10 @@ OUT: motor power
 
 static float K[Ninputs][Nstates] =
 {
-  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.3342253953,0.3083142032},
-  {0.0034804966,0.0000000000,0.0000000000,0.0034944187,0.0000000000,0.0000000000,0.0000000000,0.0000000000},
-  {0.0000000000,0.0035827882,0.0000000000,0.0000000000,0.0035971195,0.0000000000,0.0000000000,0.0000000000},
-  {0.0000000000,0.0000000000,0.0054200576,0.0000000000,0.0000000000,0.0054417442,0.0000000000,0.0000000000},
+{0.000000000000333,-0.000000000001238,-0.000000000001460,0.000000000000001,-0.000000000000002,-0.000000000000003,0.334225395310923,0.308314203204477},
+{0.010958998421456,0.000000000000003,-0.000000000000002,0.003509376112091,0.000000000000000,-0.000000000000000,0.000000000000000,0.000000000000000},
+{0.000000000000003,0.011281082665013,-0.000000000000002,0.000000000000000,0.003612516477975,-0.000000000000000,-0.000000000000000,0.000000000000000},
+{-0.000000000000029,-0.000000000000019,0.005420057594340,-0.000000000000000,-0.000000000000000,0.005441744208342,-0.000000000000002,-0.000000000000003},
 };
 
 static float b=0.001;
@@ -139,8 +139,8 @@ static void controllerTask(void* param)
 
       sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
       sensfusion6GetEulerRPY(&eulerRollActual_s, &eulerPitchActual_s, &eulerYawActual_s);
-      if(imuHasBarometer)
-      lps25hGetData(&pressure, &temperature, &asl);
+      //if(imuHasBarometer)
+      //lps25hGetData(&pressure, &temperature, &asl);
       //positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), ATTITUDE_UPDATE_DT);
       //positionEstimate(&pos, (float)(0), ATTITUDE_UPDATE_DT);
       //velocityEstimateZ(&x[6]); //x6 = dotZ?
@@ -149,7 +149,7 @@ static void controllerTask(void* param)
       //x[7] = (1.0-0.99)*asl + 1.0*x[6]*ATTITUDE_UPDATE_DT;
       x[6]=0;
       x[7]=0;
-      
+
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
       x[2]=eulerYawActual_s;
@@ -159,10 +159,10 @@ static void controllerTask(void* param)
 
 //    float yawError;
   //  yawError = eulerYawDesired - eulerYawActual;
-  //  if (yawError > 180.0)
-  //  yawError -= 360.0;
-  //  else if (yawError < -180.0)
-  //  yawError += 360.0;
+      if (x[2] > 180.0)
+      x[2] -= 360.0;
+      else if (x[2] < -180.0)
+      x[2] += 360.0;
 
       // Calculate input (T,tx,ty,tz)
       ctrlCalc(ref, x); // Do not redefine...
@@ -175,15 +175,11 @@ static void controllerTask(void* param)
       motorPowerM3 = limitThrust(baseThrust + thrusts[2]);
       motorPowerM4 = limitThrust(baseThrust + thrusts[3]);
 
-//      motorsSetRatio(MOTOR_M1, motorPowerM1);
-//      motorsSetRatio(MOTOR_M2, motorPowerM2);
-//      motorsSetRatio(MOTOR_M3, motorPowerM3);
-//      motorsSetRatio(MOTOR_M4, motorPowerM4);
+      motorsSetRatio(MOTOR_M1, motorPowerM1);
+      motorsSetRatio(MOTOR_M2, motorPowerM2);
+      motorsSetRatio(MOTOR_M3, motorPowerM3);
+      motorsSetRatio(MOTOR_M4, motorPowerM4);
 
-      motorsSetRatio(MOTOR_M1, 0);
-      motorsSetRatio(MOTOR_M2, 0);
-      motorsSetRatio(MOTOR_M3, 0);
-      motorsSetRatio(MOTOR_M4, 0);
       // DEBUG
     //  DEBUG_PRINT("Controller debug");
     attitudeCounter = 0;
@@ -265,6 +261,7 @@ LOG_ADD(LOG_FLOAT, u4, &u_k[3])
 LOG_ADD(LOG_FLOAT, z, &x[7])
 LOG_ADD(LOG_FLOAT, dz, &x[6])
 LOG_ADD(LOG_FLOAT, asl_l, &asl)
+LOG_ADD(LOG_FLOAT, x2, &x[2])
 LOG_GROUP_STOP(thrusts_s)
 
 PARAM_GROUP_START(controllerr)
