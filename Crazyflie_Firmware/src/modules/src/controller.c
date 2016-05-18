@@ -22,7 +22,7 @@ OUT: motor power
 #include "attitude_controller.h"
 #include "position_estimator.h"
 #include "log.h"
-
+#include "lps25h.h"
 #include "param.h"
 
 #include "pm.h"
@@ -72,6 +72,9 @@ float x[Nstates] = {0,0,0,0,0,0,0,0};
 float ref[Nstates] = {0,0,0,0,0,0,0,0};
 static float u_k[Ninputs];
 static float thrusts[Ninputs];
+float pressure=0;
+float asl=0;
+float temperature=0;
 
 static uint16_t limitThrust(int32_t value)
 {
@@ -136,17 +139,30 @@ static void controllerTask(void* param)
 
       sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
       sensfusion6GetEulerRPY(&eulerRollActual_s, &eulerPitchActual_s, &eulerYawActual_s);
-      positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
-      positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
-      velocityEstimateZ(&x[6]); //x6 = dotZ?
-      x[7]=pos.position.z;
-
+      if(imuHasBarometer)
+      lps25hGetData(&pressure, &temperature, &asl);
+      //positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), ATTITUDE_UPDATE_DT);
+      //positionEstimate(&pos, (float)(0), ATTITUDE_UPDATE_DT);
+      //velocityEstimateZ(&x[6]); //x6 = dotZ?
+      //x[7]=pos.position.z;
+      //x[6] += deadband(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z) , 0.04) * ATTITUDE_UPDATE_DT * 9.81;
+      //x[7] = (1.0-0.99)*asl + 1.0*x[6]*ATTITUDE_UPDATE_DT;
+      x[6]=0;
+      x[7]=0;
+      
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
       x[2]=eulerYawActual_s;
       x[3]=gyro.x;
       x[4]=-gyro.y;
       x[5]=-gyro.z;
+
+//    float yawError;
+  //  yawError = eulerYawDesired - eulerYawActual;
+  //  if (yawError > 180.0)
+  //  yawError -= 360.0;
+  //  else if (yawError < -180.0)
+  //  yawError += 360.0;
 
       // Calculate input (T,tx,ty,tz)
       ctrlCalc(ref, x); // Do not redefine...
@@ -159,11 +175,15 @@ static void controllerTask(void* param)
       motorPowerM3 = limitThrust(baseThrust + thrusts[2]);
       motorPowerM4 = limitThrust(baseThrust + thrusts[3]);
 
-      motorsSetRatio(MOTOR_M1, motorPowerM1);
-      motorsSetRatio(MOTOR_M2, motorPowerM2);
-      motorsSetRatio(MOTOR_M3, motorPowerM3);
-      motorsSetRatio(MOTOR_M4, motorPowerM4);
+//      motorsSetRatio(MOTOR_M1, motorPowerM1);
+//      motorsSetRatio(MOTOR_M2, motorPowerM2);
+//      motorsSetRatio(MOTOR_M3, motorPowerM3);
+//      motorsSetRatio(MOTOR_M4, motorPowerM4);
 
+      motorsSetRatio(MOTOR_M1, 0);
+      motorsSetRatio(MOTOR_M2, 0);
+      motorsSetRatio(MOTOR_M3, 0);
+      motorsSetRatio(MOTOR_M4, 0);
       // DEBUG
     //  DEBUG_PRINT("Controller debug");
     attitudeCounter = 0;
@@ -242,6 +262,9 @@ LOG_ADD(LOG_FLOAT, u1, &u_k[0])
 LOG_ADD(LOG_FLOAT, u2, &u_k[1])
 LOG_ADD(LOG_FLOAT, u3, &u_k[2])
 LOG_ADD(LOG_FLOAT, u4, &u_k[3])
+LOG_ADD(LOG_FLOAT, z, &x[7])
+LOG_ADD(LOG_FLOAT, dz, &x[6])
+LOG_ADD(LOG_FLOAT, asl_l, &asl)
 LOG_GROUP_STOP(thrusts_s)
 
 PARAM_GROUP_START(controllerr)

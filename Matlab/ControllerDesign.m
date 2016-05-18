@@ -57,12 +57,12 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=diag([1e1, 1e1, 1,... % r,p,y
+Q=diag([2e1, 2e1, 1,... % r,p,y
     1e1, 1e1, 1,... % p,q,r
     1, 1]); %dz z
 R=diag(100*[0.1, 0.1, 0.1, 0.1]); % thrust,Tx,Ty,Tz
-K = lqr(sysd,Q,R) % K is the feedback vector
-closed_poles=eig(A-B*K)
+[K,S,e] = lqr(sysd,Q,R) % K is the feedback vector
+closed_poles=eig(sysd.a-sysd.b*K)
 %% Kalman design
 % A=zeros(12);
 % A(1:3,4:6)=eye(3);
