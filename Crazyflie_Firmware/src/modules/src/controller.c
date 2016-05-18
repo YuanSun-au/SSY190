@@ -37,10 +37,10 @@ OUT: motor power
 
 static float K[Ninputs][Nstates] =
 {
-  {0.0000000073,-0.0000000015,0.0000000000,0.0000000000,-0.0000000000,0.0000000000,6.7330561776,6.7061103133},
-  {0.1037243307,0.0000000000,0.0000000000,0.0036949487,0.0000000000,0.0000000000,0.0000000000,0.0000000000},
-  {0.0000000000,0.1067728594,0.0000000000,0.0000000000,0.0038035457,0.0000000000,0.0000000000,0.0000000000},
-  {0.0000000000,0.0000000000,0.0054216551,0.0000000000,0.0000000000,0.0054433417,0.0000000000,0.0000000000},
+  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.3342253953,0.3083142032},
+  {0.0034804966,0.0000000000,0.0000000000,0.0034944187,0.0000000000,0.0000000000,0.0000000000,0.0000000000},
+  {0.0000000000,0.0035827882,0.0000000000,0.0000000000,0.0035971195,0.0000000000,0.0000000000,0.0000000000},
+  {0.0000000000,0.0000000000,0.0054200576,0.0000000000,0.0000000000,0.0054417442,0.0000000000,0.0000000000},
 };
 
 static float b=0.001;
@@ -48,6 +48,7 @@ static float k=0.1;
 //static float b=1; // insert values here...
 //static float k=1; // insert values here...
 static float d=0.05; // insert values here...
+static float baseThrust=0;
 estimate_t pos;
 float speedZ;
 static float eulerRollActual_s;   // Measured roll angle in deg
@@ -123,7 +124,8 @@ static void controllerTask(void* param)
 
     imu9Read(&gyro, &acc, &mag);
 
-    //if(xQueueReceive( xQueue1, &( REF ),( TickType_t ) 1000 ))
+    xQueueReceive( xQueue1, &(ref),( TickType_t ) 1 );
+
     if( imu6IsCalibrated() )
     { // if/else needed?
       // Get ref and sensor
@@ -143,8 +145,8 @@ static void controllerTask(void* param)
       x[1]=eulerPitchActual_s;
       x[2]=eulerYawActual_s;
       x[3]=gyro.x;
-      x[4]=gyro.y;
-      x[5]=gyro.z;
+      x[4]=-gyro.y;
+      x[5]=-gyro.z;
 
       // Calculate input (T,tx,ty,tz)
       ctrlCalc(ref, x); // Do not redefine...
@@ -152,10 +154,10 @@ static void controllerTask(void* param)
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);
 
-      motorPowerM1 = limitThrust(thrusts[0]);
-      motorPowerM2 = limitThrust(thrusts[1]);
-      motorPowerM3 = limitThrust(thrusts[2]);
-      motorPowerM4 = limitThrust(thrusts[3]);
+      motorPowerM1 = limitThrust(baseThrust + thrusts[0]);
+      motorPowerM2 = limitThrust(baseThrust + thrusts[1]);
+      motorPowerM3 = limitThrust(baseThrust + thrusts[2]);
+      motorPowerM4 = limitThrust(baseThrust + thrusts[3]);
 
       motorsSetRatio(MOTOR_M1, motorPowerM1);
       motorsSetRatio(MOTOR_M2, motorPowerM2);
@@ -245,4 +247,5 @@ LOG_GROUP_STOP(thrusts_s)
 PARAM_GROUP_START(controllerr)
 PARAM_ADD(PARAM_FLOAT, b, &b)
 PARAM_ADD(PARAM_FLOAT, k, &k)
+PARAM_ADD(PARAM_FLOAT, base_thrust, &baseThrust)
 PARAM_GROUP_STOP(controllerr)

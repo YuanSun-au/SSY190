@@ -57,42 +57,42 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=diag([1e5, 1e5, 0.01,... % r,p,y
-    1e2, 1e2, 0.01,... % p,q,r
+Q=diag([1e1, 1e1, 1,... % r,p,y
+    1e1, 1e1, 1,... % p,q,r
     1, 1]); %dz z
-R=eye(4)*1e-4;
+R=diag(100*[0.1, 0.1, 0.1, 0.1]); % thrust,Tx,Ty,Tz
 K = lqr(sysd,Q,R) % K is the feedback vector
-
+closed_poles=eig(A-B*K)
 %% Kalman design
-A=zeros(12);
-A(1:3,4:6)=eye(3);
-A(7,2)=-g;
-A(8,1)=g;
-A(10:12,7:9)=eye(3);
-
-B=zeros(12,4);
-B(4,2)=1/Ix;
-B(5,3)=1/Iy;
-B(6,4)=1/Iz;
-B(9,1)=1/m;
-
-C=eye(12);
-C(1,1)=0; % x is not an output
-C(2,2)=0; % y -||-
-C(4,4)=0 % xdot
-C(5,5)=0 % ydot
-% Values in the quad:
-% roll,pitch,yaw - from sensor fusion (euler deg)
-% p,q,r - from gyro (deg/s)
-% accelerometer data axis (mG)
-% magnetometer axis (Tesla?)
-
-sys=ss(A,B,C,0);
-sysd=c2d(sys,0.1);
-
-Qk=eye(12);
-Rk=eye(12);
-[L, P, E] = lqe(sys, Qk, Rk)
+% A=zeros(12);
+% A(1:3,4:6)=eye(3);
+% A(7,2)=-g;
+% A(8,1)=g;
+% A(10:12,7:9)=eye(3);
+% 
+% B=zeros(12,4);
+% B(4,2)=1/Ix;
+% B(5,3)=1/Iy;
+% B(6,4)=1/Iz;
+% B(9,1)=1/m;
+% 
+% C=eye(12);
+% C(1,1)=0; % x is not an output
+% C(2,2)=0; % y -||-
+% C(4,4)=0 % xdot
+% C(5,5)=0 % ydot
+% % Values in the quad:
+% % roll,pitch,yaw - from sensor fusion (euler deg)
+% % p,q,r - from gyro (deg/s)
+% % accelerometer data axis (mG)
+% % magnetometer axis (Tesla?)
+% 
+% sys=ss(A,B,C,0);
+% sysd=c2d(sys,0.1);
+% 
+% Qk=eye(12);
+% Rk=eye(12);
+% [L, P, E] = lqe(sys, Qk, Rk)
 
 % Test on linear plant
 
@@ -116,6 +116,8 @@ for n=1:length(K(:,1))
     for i=K(n,2:end)
         fprintf(K_c,',%10.10f',i);
     end
-    fprintf(K_c,'}\n');
+    fprintf(K_c,'},\n');
 end
 fclose(K_c);
+
+K
