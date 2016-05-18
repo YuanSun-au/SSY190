@@ -98,7 +98,7 @@ static float ref_generatorSetAngle (float value)
 // }
 
 // NOT A PERMANENT FUNCTION --> NEEDS TO BE CHANGED / DELETED
-float ref_generatorSetZThrust (uint16_t thrust)
+static float ref_generatorSetZThrust (uint16_t thrust)
 {
   if (thrust > 0) {
     return (float) thrust/2;

@@ -136,10 +136,12 @@ static void controllerTask(void* param)
 
       sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
       sensfusion6GetEulerRPY(&eulerRollActual_s, &eulerPitchActual_s, &eulerYawActual_s);
-      positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
-      positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
-      velocityEstimateZ(&x[6]); //x6 = dotZ?
-      x[7]=pos.position.z;
+      //positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
+      //positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
+      //velocityEstimateZ(&x[6]); //x6 = dotZ?
+      //x[7]=pos.position.z;
+      x[6]=0;
+      x[7]=0;
 
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
@@ -147,6 +149,11 @@ static void controllerTask(void* param)
       x[3]=gyro.x;
       x[4]=-gyro.y;
       x[5]=-gyro.z;
+
+      if (x[2] > 180.0)
+        x[2] -=360.0;
+      else if (x[2] < -180.0)
+        x[2] +=360.0;
 
 
       baseThrust = ref_generatorExtIn(ref);
