@@ -20,9 +20,13 @@ OUT: reference to controller
 #include "log.h"
 #include "debug.h"
 
+#define ANGLE 50;
+#define Z_SPEED 10;
+
 static bool isInit;
 extern QueueHandle_t xQueue2;
 int* FREQ;
+
 
 // euler angles from sensorFusion
 //static float eulerRollActual;
@@ -69,9 +73,9 @@ static float ref_generatorSetAngle (float value)
 {
 // returns an angle of +1 degree or -1 degree, if the commander input is positive, respectively negative
   if (value < 0)
-    return -1;
+    return -ANGLE;
   else if (value > 0)
-    return 1;
+    return ANGLE;
   else
     return 0;
 }
@@ -80,9 +84,9 @@ static float ref_generatorSetZ (uint16_t thrust)
 {
 // returns a speed in Z of +0.05 or -0.05 if the commander input is positive, repectively negative
   if (thrust < 0)
-    return -0.05;
+    return -Z_SPEED;
   else if (thrust > 0)
-    return 0.05;
+    return Z_SPEED;
   else
     return 0;
 }
