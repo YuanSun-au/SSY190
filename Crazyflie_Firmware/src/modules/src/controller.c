@@ -27,6 +27,7 @@ OUT: motor power
 
 #include "pm.h"
 #include "commander.h"
+#include "ref_generator.h"
 
 #define Nstates 8
 #define Ninputs 4
