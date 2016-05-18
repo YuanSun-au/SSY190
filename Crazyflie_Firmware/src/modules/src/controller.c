@@ -149,7 +149,7 @@ static void controllerTask(void* param)
       x[5]=-gyro.z;
 
 
-      ref_generatorExtIn(ref);
+      baseThrust = ref_generatorExtIn(ref);
       // Calculate input (T,tx,ty,tz)
       ctrlCalc(ref, x); // Do not redefine...
 

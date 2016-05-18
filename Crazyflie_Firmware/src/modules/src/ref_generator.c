@@ -20,8 +20,8 @@ OUT: reference to controller
 #include "log.h"
 #include "debug.h"
 
-#define ANGLE 50;
-#define Z_SPEED 10;
+#define ANGLE 80;
+//#define Z_SPEED 10;
 
 static bool isInit;
 extern QueueHandle_t xQueue2;
@@ -72,10 +72,10 @@ static void ref_generatorTask(void* param)
 static float ref_generatorSetAngle (float value)
 {
 // returns an angle of +1 degree or -1 degree, if the commander input is positive, respectively negative
-  if (value < 0) {
+  if (value < -5) {
     return -ANGLE;
   }
-  else if (value > 0) {
+  else if (value > 5) {
     return ANGLE;
   }
   else {
@@ -86,11 +86,22 @@ static float ref_generatorSetAngle (float value)
 static float ref_generatorSetZ (uint16_t thrust)
 {
 // returns a speed in Z of +0.05 or -0.05 if the commander input is positive, repectively negative
-  if (thrust < 0) {
+  if (thrust < -5) {
     return -Z_SPEED;
   }
-  else if (thrust > 0) {
+  else if (thrust > 5) {
     return Z_SPEED;
+  }
+  else {
+    return 0;
+  }
+}
+
+// NOT A PERMANENT FUNCTION --> NEEDS TO BE CHANGED / DELETED
+float ref_generatorSetZThrust (uint16_t thrust)
+{
+  if (thrust > 0) {
+    return (float) thrust/2;
   }
   else {
     return 0;
@@ -117,7 +128,7 @@ bool ref_generatorTest(void)
 }
 
 
-void ref_generatorExtIn (float* xRef)
+float ref_generatorExtIn (float* xRef)
 {
   float rollRef, pitchRef, yawRef;
   uint16_t thrust;
@@ -132,7 +143,9 @@ void ref_generatorExtIn (float* xRef)
   xRef[4]=0;
   xRef[5]=0;
   xRef[6]=0;//ref_generatorSetZ(thrust);
-  xRef[7]=ref_generatorSetZ(thrust);
+  xRef[7]=0;//ref_generatorSetZ(thrust);
+
+  return ref_generatorSetZThrust(thrust);
 }
 
 /* Loggable variables */

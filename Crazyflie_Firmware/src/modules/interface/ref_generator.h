@@ -33,6 +33,6 @@
 void ref_generatorInit(void);
 bool ref_generatorTest(void);
 
-void ref_generatorExtIn (float* xRef);
+float ref_generatorExtIn (float* xRef);
 
 #endif /* controller_H_ */
