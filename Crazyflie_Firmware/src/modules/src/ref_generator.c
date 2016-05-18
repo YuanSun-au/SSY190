@@ -72,23 +72,29 @@ static void ref_generatorTask(void* param)
 static float ref_generatorSetAngle (float value)
 {
 // returns an angle of +1 degree or -1 degree, if the commander input is positive, respectively negative
-  if (value < 0)
+  if (value < 0) {
     return -ANGLE;
-  else if (value > 0)
+  }
+  else if (value > 0) {
     return ANGLE;
-  else
+  }
+  else {
     return 0;
+  }
 }
 
 static float ref_generatorSetZ (uint16_t thrust)
 {
 // returns a speed in Z of +0.05 or -0.05 if the commander input is positive, repectively negative
-  if (thrust < 0)
+  if (thrust < 0) {
     return -Z_SPEED;
-  else if (thrust > 0)
+  }
+  else if (thrust > 0) {
     return Z_SPEED;
-  else
+  }
+  else {
     return 0;
+  }
 }
 
 void ref_generatorInit(void)
