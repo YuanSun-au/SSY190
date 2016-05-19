@@ -42,7 +42,6 @@ static float K[Ninputs][Nstates] =
   {0.0011008100,0.0000000000,0.0000000200,0.0034854755,0.0000000000,0.0000000000,-0.0000000000,-0.0000000000},
   {0.0000000000,0.0011330817,-0.0000002301,0.0000000000,0.0035876571,-0.0000000005,-0.0000000000,0.0000000000},
   {0.0000000000,-0.0000000000,0.0001717760,0.0000000000,-0.0000000000,0.0054328436,-0.0000000000,-0.0000000000},
-
 };
 //static float b=0.0001;
 //static float k=0.00000275;
@@ -100,10 +99,10 @@ static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
   //predefine b,d,k
-  thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   +0.0069*inputs[3];
-  thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   -0.0069*inputs[3];
-  thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +0.0069*inputs[3];
-  thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -0.0069*inputs[3];
+  thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   +1.0069*inputs[3];
+  thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   -1.0069*inputs[3];
+  thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +1.0069*inputs[3];
+  thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -1.0069*inputs[3];
 
   int i;
   for (i=0;i<Ninputs;i++)
