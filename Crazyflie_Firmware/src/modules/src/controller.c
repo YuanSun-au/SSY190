@@ -105,6 +105,7 @@ static void Torque2Thrust(float inputs[Ninputs])
   thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +0.0069*inputs[3];
   thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -0.0069*inputs[3];
 
+  int i;
   for (i=0;i<Ninputs;i++)
   {
     thrusts[i]=-7.340774733578*thrusts[i]*thrusts[i] + 1463.694146189835*thrusts[i] + 1135.702896436404;
@@ -259,7 +260,7 @@ LOG_ADD(LOG_FLOAT, u4, &u_k[3])
 LOG_GROUP_STOP(thrusts_s)
 
 PARAM_GROUP_START(controllerr)
-PARAM_ADD(PARAM_FLOAT, b, &b)
-PARAM_ADD(PARAM_FLOAT, k, &k)
+//PARAM_ADD(PARAM_FLOAT, b, &b)
+//PARAM_ADD(PARAM_FLOAT, k, &k)
 PARAM_ADD(PARAM_FLOAT, base_thrust, &baseThrust)
 PARAM_GROUP_STOP(controllerr)
