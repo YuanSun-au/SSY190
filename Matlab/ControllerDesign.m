@@ -8,9 +8,9 @@
 % b,d,k,l,m,g; % other params
 g=9.81;
 m=0.027;
-b=1e-3;
-k=b;
-d=0.1;
+b=2.75e-11;
+k=1e-9;
+d=0.05;
 Ix = 1.395e-5;
 Iy = 1.436e-5;
 Iz = 2.173e-5;
@@ -26,13 +26,15 @@ Iz = 2.173e-5;
 % R2;   % Rotation used to transform rpy to w
 %%
 syms d k b;
- TorqueThrust=[-b, -b, -b, -b;
-                   0, -d*b, 0, d*b;
-                   d*b, 0, -d*b, 0;
-                   k, -k, k, -k]; % generates Thrust(sum) and torque(1,2,3)
+ TorqueThrust=[-1, -1, -1, -1;
+                   0, -d, 0, d;
+                   d, 0, -d, 0;
+                   k/b, -k/b, k/b, -k/b]; % generates Thrust(sum) and torque(1,2,3)
+               
  Rotz=[ cosd(45) -sind(45) 0;
         sind(45) cosd(45) 0;
         0   0   1];
+    
  newTorque=Rotz*TorqueThrust(2:end,:);
  Total=[TorqueThrust(1,:);newTorque];
  Ainv = inv(Total)
@@ -105,7 +107,7 @@ for n=1:length(K(:,1))
     for i=K(n,2:end)
         fprintf(fb,',%14.5f',i);
     end
-    fprintf(fb,';\n')
+    fprintf(fb,';\n');
 end
 fclose(fb);
 
@@ -120,4 +122,4 @@ for n=1:length(K(:,1))
 end
 fclose(K_c);
 
-K
+K;
