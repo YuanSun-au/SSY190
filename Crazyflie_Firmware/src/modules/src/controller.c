@@ -107,6 +107,11 @@ thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs
 thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
 thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
 
+[ -1/4, -2^(1/2)/(4*d),  2^(1/2)/(4*d),  11/1600]
+[ -1/4, -2^(1/2)/(4*d), -2^(1/2)/(4*d), -11/1600]
+[ -1/4,  2^(1/2)/(4*d), -2^(1/2)/(4*d),  11/1600]
+[ -1/4,  2^(1/2)/(4*d),  2^(1/2)/(4*d), -11/1600]
+
 }
 
 static void controllerTask(void* param)
@@ -169,6 +174,7 @@ static void controllerTask(void* param)
 
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);
+
 
       motorPowerM1 = limitThrust(baseThrust + thrusts[0]);
       motorPowerM2 = limitThrust(baseThrust + thrusts[1]);
