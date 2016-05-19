@@ -60,7 +60,7 @@ sysd=c2d(sys,Ts);
 Q=diag([1e-2, 1e-2, 1e-1,... % r,p,y
     1e-1, 1e-1, 1e-1,... % p,q,r
     1e0, 1e0]); %dz z
-R=diag(100*[1, 1, 1, 1]); % thrust,Tx,Ty,Tz
+R=diag(10*[1, 1, 1, 1]); % thrust,Tx,Ty,Tz
 K = lqr(sysd,Q,R) % K is the feedback vector
 closed_poles=eig(A-B*K)
 %% Kalman design
