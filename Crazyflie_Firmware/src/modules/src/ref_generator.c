@@ -20,7 +20,7 @@ OUT: reference to controller
 #include "log.h"
 #include "debug.h"
 
-#define ANGLE 20;
+#define ANGLE 10;
 //#define Z_SPEED 10;
 
 static bool isInit;
