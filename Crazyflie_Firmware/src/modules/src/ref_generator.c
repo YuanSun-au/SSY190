@@ -101,7 +101,7 @@ static float ref_generatorSetAngle (float value)
 static float ref_generatorSetZThrust (uint16_t thrust)
 {
   if (thrust > 0) {
-    return (float) thrust/2;
+    return (float) thrust*0.8;
   }
   else {
     return 0;
