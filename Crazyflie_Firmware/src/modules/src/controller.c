@@ -150,7 +150,7 @@ static void controllerTask(void* param)
 
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
-      x[2]=eulerYawActual_s; //  DEBUG 
+      x[2]=eulerYawActual_s; //  DEBUG
       x[3]=gyro.x;
       x[4]=-gyro.y;
       x[5]=-gyro.z;
@@ -168,7 +168,7 @@ static void controllerTask(void* param)
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);
 
-      motorPowerM1 = limitThrust(baseThrust + thrusts[0]);
+      motorPowerM1 = limitThrust(0);//baseThrust + thrusts[0]);
       motorPowerM2 = limitThrust(baseThrust + thrusts[1]);
       motorPowerM3 = limitThrust(baseThrust + thrusts[2]);
       motorPowerM4 = limitThrust(baseThrust + thrusts[3]);
