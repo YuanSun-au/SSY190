@@ -59,8 +59,8 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=diag([1e-2, 1e-2, 1e4,... % r,p,y
-    1e-1, 1e-1, 1e7,... % p,q,r
+Q=diag([1e-2, 1e-2, 1e6,... % r,p,y
+    1e-1, 1e-1, 1e8,... % p,q,r
     1e0, 1e0]); %dz z
 R=diag(10*[1, 1, 1, 1]); % thrust,Tx,Ty,Tz
 K = lqr(sysd,Q,R) % K is the feedback vector
