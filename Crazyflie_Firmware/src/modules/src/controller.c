@@ -146,7 +146,7 @@ static void controllerTask(void* param)
 
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
-      x[2]=eulerYawActual_s;
+      x[2]=-eulerYawActual_s;
       x[3]=gyro.x;
       x[4]=-gyro.y;
       x[5]=-gyro.z;
