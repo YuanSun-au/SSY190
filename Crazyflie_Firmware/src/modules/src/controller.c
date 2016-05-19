@@ -27,6 +27,7 @@ OUT: motor power
 
 #include "pm.h"
 #include "commander.h"
+#include "ref_generator.h"
 
 #define Nstates 8
 #define Ninputs 4
@@ -43,8 +44,8 @@ static float K[Ninputs][Nstates] =
   {0.0000000000,0.0000000000,0.0054200576,0.0000000000,0.0000000000,0.0054417442,0.0000000000,0.0000000000},
 };
 
-static float b=0.001;
-static float k=0.1;
+static float b=0.0001;
+static float k=0.00000275;
 //static float b=1; // insert values here...
 //static float k=1; // insert values here...
 static float d=0.05; // insert values here...
@@ -127,7 +128,7 @@ static void controllerTask(void* param)
 
     imu9Read(&gyro, &acc, &mag);
 
-    xQueueReceive( xQueue1, &(ref),( TickType_t ) 1 );
+    //xQueueReceive( xQueue1, &(ref),( TickType_t ) 1 );
 
     if( imu6IsCalibrated() )
     { // if/else needed?
@@ -157,13 +158,13 @@ static void controllerTask(void* param)
       x[4]=-gyro.y;
       x[5]=-gyro.z;
 
-//    float yawError;
-  //  yawError = eulerYawDesired - eulerYawActual;
-  //  if (yawError > 180.0)
-  //  yawError -= 360.0;
-  //  else if (yawError < -180.0)
-  //  yawError += 360.0;
+      if (x[2] > 180.0)
+        x[2] -=360.0;
+      else if (x[2] < -180.0)
+        x[2] +=360.0;
 
+
+      baseThrust = ref_generatorExtIn(ref);
       // Calculate input (T,tx,ty,tz)
       ctrlCalc(ref, x); // Do not redefine...
 
