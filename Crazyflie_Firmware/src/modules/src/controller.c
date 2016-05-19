@@ -107,7 +107,7 @@ static void Torque2Thrust(float inputs[Ninputs])
   int i;
   for (i=0;i<Ninputs;i++)
   {
-    thrusts[i]=-7.340774733578*thrusts[i]*thrusts[i] + 1463.694146189835*thrusts[i] + 1135.702896436404;
+    thrusts[i]= -7.340774733578*thrusts[i]*thrusts[i] + 1463.694146189835*thrusts[i] + 1135.702896436404;
   }
 }
 
@@ -150,7 +150,7 @@ static void controllerTask(void* param)
 
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
-      x[2]=-eulerYawActual_s;
+      x[2]=eulerYawActual_s; //  DEBUG 
       x[3]=gyro.x;
       x[4]=-gyro.y;
       x[5]=-gyro.z;
