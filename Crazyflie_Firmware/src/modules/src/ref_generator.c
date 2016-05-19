@@ -20,7 +20,7 @@ OUT: reference to controller
 #include "log.h"
 #include "debug.h"
 
-#define ANGLE 10;
+#define ANGLE 20;
 //#define Z_SPEED 10;
 
 static bool isInit;
@@ -138,7 +138,7 @@ float ref_generatorExtIn (float* xRef)
 
   xRef[0]=rollRef;  //ref_generatorSetAngle(rollRef);
   xRef[1]=pitchRef; //ref_generatorSetAngle(pitchRef);
-  xRef[2]=90; // yaw always zero  --> might still be changed if desired
+  //xRef[2]=90; // yaw always zero  --> might still be changed if desired
   //xRef[3]=0; // we might not need these since they always are 0
   //xRef[4]=0;
   //xRef[5]=0;
