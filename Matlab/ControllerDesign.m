@@ -28,6 +28,7 @@ Iz = 2.173e-5;
 syms d k b;
 b=2.75e-11;% lift constant
 k=1e-9;% drag constant
+d=0.05;
 
  TorqueThrust=[-1, -1, -1, -1;
                    0, -d, 0, d;

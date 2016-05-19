@@ -102,16 +102,10 @@ static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
   //predefine b,d,k
-thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
-thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
-
-[ -1/4, -2^(1/2)/(4*d),  2^(1/2)/(4*d),  11/1600]
-[ -1/4, -2^(1/2)/(4*d), -2^(1/2)/(4*d), -11/1600]
-[ -1/4,  2^(1/2)/(4*d), -2^(1/2)/(4*d),  11/1600]
-[ -1/4,  2^(1/2)/(4*d),  2^(1/2)/(4*d), -11/1600]
-
+thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   +0.0069*inputs[3];
+thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   -0.0069*inputs[3];
+thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +0.0069*inputs[3];
+thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -0.0069*inputs[3];
 }
 
 static void controllerTask(void* param)
