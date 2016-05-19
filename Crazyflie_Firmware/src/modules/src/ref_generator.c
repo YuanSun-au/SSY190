@@ -138,12 +138,12 @@ float ref_generatorExtIn (float* xRef)
 
   xRef[0]=rollRef;  //ref_generatorSetAngle(rollRef);
   xRef[1]=pitchRef; //ref_generatorSetAngle(pitchRef);
-  xRef[2]=0; // yaw always zero  --> might still be changed if desired
-  xRef[3]=0; // we might not need these since they always are 0
-  xRef[4]=0;
-  xRef[5]=0;
-  xRef[6]=0;//ref_generatorSetZ(thrust);
-  xRef[7]=0;//ref_generatorSetZ(thrust);
+  xRef[2]=90; // yaw always zero  --> might still be changed if desired
+  //xRef[3]=0; // we might not need these since they always are 0
+  //xRef[4]=0;
+  //xRef[5]=0;
+  //xRef[6]=0;//ref_generatorSetZ(thrust);
+  //xRef[7]=0;//ref_generatorSetZ(thrust);
 
   return ref_generatorSetZThrust(thrust);
 }

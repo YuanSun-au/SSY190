@@ -100,6 +100,7 @@ static void Torque2Thrust(float inputs[Ninputs])
 {
   //predefine b,d,k
 <<<<<<< HEAD
+<<<<<<< HEAD
   thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   -0.0069*inputs[3];
   thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   +0.0069*inputs[3];
   thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   -0.0069*inputs[3];
@@ -110,6 +111,12 @@ static void Torque2Thrust(float inputs[Ninputs])
   thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +7.0069*inputs[3];
   thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -7.0069*inputs[3];
 >>>>>>> b5ad853d3b798863e747e8fa171713639a802d09
+=======
+  thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   +0.0069*inputs[3];
+  thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   -0.0069*inputs[3];
+  thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +0.0069*inputs[3];
+  thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -0.0069*inputs[3];
+>>>>>>> 3abeef25630fbe017688cd32e260364ee29abd12
 
   int i;
   for (i=0;i<Ninputs;i++)
