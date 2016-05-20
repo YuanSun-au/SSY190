@@ -32,7 +32,7 @@ OUT: motor power
 #define Nstates 8
 #define Ninputs 4
 
-#define MIN_THRUST 1500;
+#define MIN_THRUST 1500
 
 #define ATTITUDE_UPDATE_RATE_DIVIDER  2
 #define ATTITUDE_UPDATE_DT  (float)(1.0 / (IMU_UPDATE_FREQ / ATTITUDE_UPDATE_RATE_DIVIDER)) // 250hz
