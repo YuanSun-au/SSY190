@@ -148,7 +148,7 @@ float ref_generatorExtIn (float* xRef)
   //xRef[6]=0;//ref_generatorSetZ(thrust);
   //xRef[7]=0;//ref_generatorSetZ(thrust);
 
-  return ref_generatorSetZThrust(thrust);
+  return 0;//ref_generatorSetZThrust(thrust);
 }
 
 /* Loggable variables */
