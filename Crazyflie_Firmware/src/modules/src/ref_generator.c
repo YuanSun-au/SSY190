@@ -42,14 +42,14 @@ int* FREQ;
 
 static void ref_generatorTask(void* param)
 {
-//  uint32_t lastWakeTime;
+  uint32_t lastWakeTime;
 
 //  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR); // OMG WHAT IS THIS
 
   //Wait for the system to be fully started
   systemWaitStart();
 
-//  lastWakeTime = xTaskGetTickCount ();
+  lastWakeTime = xTaskGetTickCount ();
 
   //int ledstatus = 0; // for the ledToggle
 
