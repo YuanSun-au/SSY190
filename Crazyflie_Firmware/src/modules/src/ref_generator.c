@@ -101,7 +101,7 @@ static void ref_generatorTask(void* param)
 static float ref_generatorSetZThrust (uint16_t thrust)
 {
   if (thrust > 0) {
-    return (float) thrust*0.01;
+    return (float) thrust*0.03;
   }
   else {
     return 0;
