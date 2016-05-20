@@ -212,9 +212,6 @@ static void controllerTask(void* param)
       motorPowerM3 = limitThrust(baseThrust + MIN_THRUST + thrusts[2]);
       motorPowerM4 = limitThrust(baseThrust + MIN_THRUST + thrusts[3]);
 
-      if (reset_I)
-        motorsSetRatio(MOTOR_M1, 0);
-      else
       motorsSetRatio(MOTOR_M1, motorPowerM1);
       motorsSetRatio(MOTOR_M2, motorPowerM2);
       motorsSetRatio(MOTOR_M3, motorPowerM3);
