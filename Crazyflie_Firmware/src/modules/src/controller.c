@@ -72,7 +72,8 @@ static float eulerYawActual_s;    // Measured yaw angle in deg
 static bool isInit;
 extern QueueHandle_t xQueue1;
 int* REF;
-static uint16_t reset_I=1;
+static uint16_t reset_I=0;
+uint16_t *pnt_reset_I;
 
 uint32_t motorPowerM1;  // Motor 1 power output (16bit value used: 0 - 65535)
 uint32_t motorPowerM2;  // Motor 2 power output (16bit value used: 0 - 65535)
@@ -168,7 +169,8 @@ static void controllerTask(void* param)
 
     imu9Read(&gyro, &acc, &mag);
 
-    xQueueReceive( xQueue1, &(reset_I),( TickType_t ) 1 );
+    xQueueReceive( xQueue1, &(pnt_reset_I),( TickType_t ) 1 );
+    reset_I=*pnt_reset_I;
 
     if( imu6IsCalibrated() )
     { // if/else needed?
@@ -237,6 +239,8 @@ void controllerInit(void)
   imu6Init();
   sensfusion6Init();
   attitudeControllerInit();
+
+  pnt_reset_I=&reset_I;
 
   // Create task
   xTaskCreate(controllerTask, CONTROLLER_TASK_NAME,
