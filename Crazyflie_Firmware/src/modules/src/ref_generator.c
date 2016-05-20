@@ -157,5 +157,5 @@ LOG_ADD(LOG_INT8, ref_freq, &FREQ)
 LOG_GROUP_STOP(ref)
 
 PARAM_GROUP_START(multiplicator)
-PARAM_ADD(PARAM_FLOAT, thrustMultiplicator, &thrustMultiplicator)
+PARAM_ADD(PARAM_FLOAT, thrustMultipl, &thrustMultiplicator)
 PARAM_GROUP_STOP(multiplicator)
