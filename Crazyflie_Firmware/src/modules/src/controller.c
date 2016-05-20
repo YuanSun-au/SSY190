@@ -245,6 +245,10 @@ LOG_ADD(LOG_FLOAT, pitch, &eulerPitchActual_s)
 LOG_ADD(LOG_FLOAT, yaw, &eulerYawActual_s)
 LOG_GROUP_STOP(ctrl_rpy)
 
+LOG_GROUP_START(thrust)
+LOG_ADD(LOG_FLOAT, baseThrust, &baseThrust)
+LOG_GROUP_STOP(thrust)
+
 LOG_GROUP_START(acc)
 LOG_ADD(LOG_FLOAT, x, &acc.x)
 LOG_ADD(LOG_FLOAT, y, &acc.y)
