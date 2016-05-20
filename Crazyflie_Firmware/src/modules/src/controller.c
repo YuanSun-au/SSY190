@@ -29,20 +29,33 @@ OUT: motor power
 #include "commander.h"
 #include "ref_generator.h"
 
-#define Nstates 8
+#define Nstates 6
 #define Ninputs 4
 
 #define MIN_THRUST 1000
+
+#define LIMPOS 1000
+#define LIMNEG -1000
 
 #define ATTITUDE_UPDATE_RATE_DIVIDER  2
 #define ATTITUDE_UPDATE_DT  (float)(1.0 / (IMU_UPDATE_FREQ / ATTITUDE_UPDATE_RATE_DIVIDER)) // 250hz
 
 static float K[Ninputs][2*Nstates] =
 {
-  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0,0,0,0},
-  {0.0045288046,-0.0000001182,0.0000000097,0.0034965470,0.0000000002,-0.0000000000,-0.0010435354,-0.0000000000,-0.0000000000,0.0000005561,-0.0000001182,0.0000000097,0,0,0,0},
-  {0.0000010273,0.0046610464,0.0000000093,-0.0000000021,0.0035993147,-0.0000000000,0.0000000000,-0.0010742056,-0.0000000000,0.0000010273,-0.0000002903,0.0000000093,0,0,0,0},
-  {0.0001000972,0.0000000873,0.0,-0.0000002002,-0.0000000002,0.0054390062,-0.0000000000,-0.0000000000,-0.0000000004,0.0001000971,0.0000000873,-0.0016243408,0,0,0,0},
+  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0,0,0,0,0,0},
+  {0.0034805389,0.0000000000,-0.0000000000,0.0034944611,0.0000000000,-0.0000000000,0,0,0,0,0,0},
+  {0.0000000000,0.0035828343,-0.0000000000,0.0000000000,0.0035971657,-0.0000000000,0,0,0,0,0,0},
+  {-0.0000000000,-0.0000000000,0.0000000153,-0.0000000000,-0.0000000000,0.0054325000,0,0,0,0,0,0},
+}
+
+
+
+static float Ki[Ninputs][2*Nstates] =
+{
+  {0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000,0.0000000000},
+  {0.0045288046,-0.0000001182,0.0000000097,0.0034965470,0.0000000002,-0.0000000000,-0.0010435354,-0.0000000000,-0.0000000000,0.0000005561,-0.0000001182,0.0000000097},
+  {0.0000010273,0.0046610464,0.0000000093,-0.0000000021,0.0035993147,-0.0000000000,0.0000000000,-0.0010742056,-0.0000000000,0.0000010273,-0.0000002903,0.0000000093},
+  {0.0001000972,0.0000000873,0.0,-0.0000002002,-0.0000000002,0.0054390062,-0.0000000000,-0.0000000000,-0.0000000004,0.0001000971,0.0000000873,-0.0016243408},
 };
 //static float b=0.0001;
 //static float k=0.00000275;
@@ -70,16 +83,38 @@ static Axis3f acc;  // Accelerometer axis data in mG
 static Axis3f mag;  // Magnetometer axis data in testla
 
 float u[Ninputs];
-float x[Nstates] = {0,0,0,0,0,0,0,0};
-float ref[Nstates] = {0,0,0,0,0,0,0,0};
-float xi[Nstates] = {0,0,0,0,0,0,0,0};
+float x[Nstates] = {0,0,0,0,0,0};
+float ref[Nstates] = {0,0,0,0,0,0};
+float xi[Nstates] = {0,0,0,0,0,0};
 static float u_k[Ninputs];
 static float thrusts[Ninputs];
+
 
 static uint16_t limitThrust(int32_t value)
 {
   return limitUint16(value);
 }
+
+
+static void integratorCalc(void)
+{
+  int i;
+  for(i=0;i<2;i++)
+  {
+    xi[i]+=ref[i]-x[i];
+    if(reset_I)
+      xi[i]=0;
+
+    if(xi[i]>LIMPOS)
+    {
+      xi[i]=LIMPOS;
+    }else if(xi[i]<LIMNEG)
+    {
+      xi[i]=LIMNEG;
+    }
+  }
+}
+
 
 static void ctrlCalc(float states[2*Nstates])
 // Calculates control signal given states and state references
@@ -92,8 +127,10 @@ static void ctrlCalc(float states[2*Nstates])
     u_k[i]=0;
     for(j=0;j<1*Nstates;j++)
     {
-      //u_k[i]=u_k[i]+K[i][j]*(ref[j]-states[j]);
-      u_k[i]=u_k[i] - K[i][j]*(states[j]);
+      if (reset_I)  // no integrator
+        u_k[i]=u_k[i]+K[i][j]*(ref[j]-states[j]);
+      else          // with integrator
+        u_k[i]=u_k[i] - Ki[i][j]*(states[j]);
     }
   }
 }
@@ -101,10 +138,6 @@ static void ctrlCalc(float states[2*Nstates])
 static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
-  //predefine b,d,k
-  //inputs[0]=0;
-  //inputs[1]=0;
-  //inputs[2]=0;
   thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   +9.0909*inputs[3];
   thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   -9.0909*inputs[3];
   thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +9.0909*inputs[3];
@@ -149,38 +182,15 @@ static void controllerTask(void* param)
       sensfusion6GetEulerRPY(&eulerRollActual_s, &eulerPitchActual_s, &eulerYawActual_s);
       //positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
       //positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
-      //velocityEstimateZ(&x[6]); //x6 = dotZ?
-      //x[7]=pos.position.z;
-      x[6]=0;
-      x[7]=0;
 
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
-      x[2]=-eulerYawActual_s; //  DEBUG
+      x[2]=-eulerYawActual_s;
       x[3]=gyro.x;
       x[4]=-gyro.y;
       x[5]=-gyro.z;
 
-      // Integrator states
-      float limPos = 1000;
-      float limNeg = -1000;
-      int i;
-
-
-      for(i=0;i<2;i++)
-      {
-        xi[i]+=ref[i]-x[i];
-        if(reset_I)
-          xi[i]=0;
-
-        if(xi[i]>limPos)
-        {
-          xi[i]=limPos;
-        }else if(xi[i]<limNeg)
-        {
-          xi[i]=limNeg;
-        }
-      }
+      integratorCalc();
 
       if (x[2] > 180.0)
         x[2] -=360.0;
@@ -188,7 +198,8 @@ static void controllerTask(void* param)
         x[2] +=360.0;
       baseThrust = ref_generatorExtIn(ref);
       // Calculate input (T,tx,ty,tz)
-      float xxi[2*Nstates] = {x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],xi[0],xi[1],xi[2],xi[3],xi[4],xi[5],xi[6],xi[7]};
+      float xxi[2*Nstates] = {x[0],x[1],x[2],x[3],x[4],x[5],xi[0],xi[1],xi[2],xi[3],xi[4],xi[5]};
+
       ctrlCalc(xxi); // Do not redefine...
 
       // Translate from (T,tx,ty,tz) to motorPowerMi
