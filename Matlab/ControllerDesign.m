@@ -41,17 +41,17 @@ syms d k b;
 %%
 % Equations
 
-A=zeros(8);
+A=zeros(6);
 A(1:3,4:6)=eye(3);
-A(8,7)=1;
+%A(8,7)=1;
 
-B=zeros(8,4);
+B=zeros(6,4);
 B(4,2)=1/Ix;
 B(5,3)=1/Iy;
 B(6,4)=1/Iz;
-B(7,1)=1/m;
+%B(7,1)=1/m;
 
-C=eye(8);
+C=eye(6);
 
 sys=ss(A,B,C,0);
 Ts=1/250; % 250Hz (The example in the quad uses this)
@@ -59,13 +59,12 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=diag([1e4, 1e4, 1e4,... % r,p,y
-    1e4, 1e4, 1e5,... % p,q,r
-    1e-5, 1e-5]); %dz z
+Q=diag([1e4, 1e4, 1e5,... % r,p,y
+    1e4, 1e4, 1e4]); %dz z
 R=diag(1*[1, 1, 1, 1]); % thrust,Tx,Ty,Tz
 K = lqr(sysd,Q,R) % K is the feedback vector
 closed_poles=eig(sysd.a-sysd.b*K)
-[K,s,e]=lqi(sysd,[Q,zeros(8,8);zeros(8,8),0.1*Q],R);
+[K,s,e]=lqi(sysd,[Q,zeros(6);zeros(6),0.09*Q],R);
 %% Kalman design
 % A=zeros(12);
 % A(1:3,4:6)=eye(3);
