@@ -59,9 +59,9 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=diag([1e3, 1e3, 1e4,... % r,p,y
-    1e4, 1e4, 1e3,... % p,q,r
-    1, 1]); %dz z
+Q=diag([1e4, 1e4, 1e4,... % r,p,y
+    1e4, 1e4, 1e5,... % p,q,r
+    1e-5, 1e-5]); %dz z
 R=diag(1*[1, 1, 1, 1]); % thrust,Tx,Ty,Tz
 K = lqr(sysd,Q,R) % K is the feedback vector
 closed_poles=eig(sysd.a-sysd.b*K)
