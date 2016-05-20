@@ -41,7 +41,7 @@ static void mode_switcherTask(void* param)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(1)); // 500Hz
 
-    xQueueSend( xQueue1,( void * ) pnt_integ, ( TickType_t ) 1000 );
+    xQueueSend( xQueue1,( void * ) &pnt_integ, ( TickType_t ) 1000 );
     //xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
     }
   }
