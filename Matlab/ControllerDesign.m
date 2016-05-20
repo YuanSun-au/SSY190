@@ -59,9 +59,9 @@ sysd=c2d(sys,Ts);
 
 %% Controller design
 % Select parameters
-Q=diag([1e2, 1e2, 1e6,... % r,p,y
-    1e2, 1e2, 1e9,... % p,q,r
-    1e-5, 1e-5]); %dz z
+Q=diag([1e3, 1e3, 1e5,... % r,p,y
+    1e2, 1e2, 1e7,... % p,q,r
+    1, 1]); %dz z
 R=diag(1*[1, 1, 1, 1]); % thrust,Tx,Ty,Tz
 K = lqr(sysd,Q,R) % K is the feedback vector
 closed_poles=eig(A-B*K)
@@ -99,7 +99,7 @@ closed_poles=eig(A-B*K)
 % Test on linear plant
 
 %% pretty outputs
-K=lqi(sysd,[Q,zeros(8,8);zeros(8,8),0.1*Q],R);
+[K,s,e]=lqi(sysd,[Q,zeros(8,8);zeros(8,8),0.01*Q],R);
 
 fb=fopen('feedback.txt','w');
 
