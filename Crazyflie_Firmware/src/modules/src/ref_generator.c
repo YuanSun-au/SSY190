@@ -28,7 +28,7 @@ OUT: reference to controller
 static bool isInit;
 extern QueueHandle_t xQueue2;
 int* FREQ;
-static float thrustM = 0.04;
+static float thrustM = 0.8;
 
 
 // euler angles from sensorFusion
