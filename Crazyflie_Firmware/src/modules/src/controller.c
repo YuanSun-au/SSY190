@@ -192,10 +192,10 @@ static void controllerTask(void* param)
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);
 
-      motorPowerM1 = limitThrust(baseThrust+MIN_THRUST);// + thrusts[0]);
-      motorPowerM2 = limitThrust(baseThrust+MIN_THRUST);// + thrusts[1]);
-      motorPowerM3 = limitThrust(baseThrust+MIN_THRUST);// + thrusts[2]);
-      motorPowerM4 = limitThrust(baseThrust+MIN_THRUST);// + thrusts[3]);
+      motorPowerM1 = limitThrust(baseThrust + MIN_THRUST + thrusts[0]);
+      motorPowerM2 = limitThrust(baseThrust + MIN_THRUST + thrusts[1]);
+      motorPowerM3 = limitThrust(baseThrust + MIN_THRUST + thrusts[2]);
+      motorPowerM4 = limitThrust(baseThrust + MIN_THRUST + thrusts[3]);
 
       motorsSetRatio(MOTOR_M1, motorPowerM1);
       motorsSetRatio(MOTOR_M2, motorPowerM2);
