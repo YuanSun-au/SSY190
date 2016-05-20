@@ -184,7 +184,7 @@ static void controllerTask(void* param)
         x[2] -=360.0;
       else if (x[2] < -180.0)
         x[2] +=360.0;
-      baseThrust = ref_generatorExtIn(ref);
+      //baseThrust = ref_generatorExtIn(ref);
       // Calculate input (T,tx,ty,tz)
       float xxi[2*Nstates] = {x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],xi[0],xi[1],xi[2],xi[3],xi[4],xi[5],xi[6],xi[7]};
       ctrlCalc(xxi); // Do not redefine...
