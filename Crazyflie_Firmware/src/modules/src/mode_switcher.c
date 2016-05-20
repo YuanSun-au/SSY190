@@ -14,17 +14,17 @@ or STOP (controller off)
 #define Nstates 8
 
 static bool isInit;
-static int status=0;
+//static int status=0;
 float ref_mode[Nstates] = {0,0,0,0,0,0,0,0};
 extern QueueHandle_t xQueue1;
-float* float_ref_pnt;
-extern QueueHandle_t xQueue2;
+//float* float_ref_pnt;
+//extern QueueHandle_t xQueue2;
 uint16_t integ;
 uint16_t* pnt_integ;
 
-static int toggle(int var){
-  return var?0:1;
-}
+//static int toggle(int var){
+//  return var?0:1;
+//}
 
 static void mode_switcherTask(void* param)
 {
