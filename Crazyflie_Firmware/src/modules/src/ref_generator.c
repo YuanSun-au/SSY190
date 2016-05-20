@@ -19,6 +19,7 @@ OUT: reference to controller
 #include "ref_generator.h"
 #include "log.h"
 #include "debug.h"
+#include "param.h"
 
 //#define ANGLE 20;
 
