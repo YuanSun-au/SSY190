@@ -28,7 +28,7 @@ OUT: reference to controller
 static bool isInit;
 extern QueueHandle_t xQueue2;
 int* FREQ;
-static float thrustMultiplicator = 0.04;
+static float thrustM = 0.04;
 
 
 // euler angles from sensorFusion
@@ -104,7 +104,7 @@ static void ref_generatorTask(void* param)
 static float ref_generatorSetZThrust (uint16_t thrust)
 {
   if (thrust > 0) {
-    return (float) thrust*thrustMultiplicator;
+    return (float) thrust*thrustM;
   }
   else {
     return 0;
@@ -157,5 +157,5 @@ LOG_ADD(LOG_INT8, ref_freq, &FREQ)
 LOG_GROUP_STOP(ref)
 
 PARAM_GROUP_START(multiplicator)
-PARAM_ADD(PARAM_FLOAT, thrustMultipl, &thrustMultiplicator)
+PARAM_ADD(PARAM_FLOAT, thrustMult, &thrustM)
 PARAM_GROUP_STOP(multiplicator)
