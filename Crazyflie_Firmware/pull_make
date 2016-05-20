@@ -1,0 +1,5 @@
+cd ..
+git pull
+cd Crazyflie_Firmware/
+make
+make cload

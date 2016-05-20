@@ -27,6 +27,7 @@ OUT: motor power
 
 #include "pm.h"
 #include "commander.h"
+#include "ref_generator.h"
 
 #define Nstates 8
 #define Ninputs 4
@@ -42,12 +43,11 @@ static float K[Ninputs][2*Nstates] =
   {-0.0000000502,0.0047195244,-0.0000000589,0.0000000001,0.0035993842,0.0000000001,-0.0000000007,0.0000003555,-0.0000000000,-0.0011322608,0.0000000000,-0.0000000502,-0.0000000536,-0.0000000589,0.0000003555,0.0000000000},
   {0.0000002454,0.0000001064,0.0071397847,-0.0000000005,-0.0000000002,0.0054451720,0.0000000003,-0.0000001475,-0.0000000000,-0.0000000000,-0.0017128890,0.0000002454,0.0000001064,-0.0000000155,-0.0000001475,-0.0000000000},
 };
-
-static float b=0.001;
-static float k=0.1;
+//static float b=0.0001;
+//static float k=0.00000275;
 //static float b=1; // insert values here...
 //static float k=1; // insert values here...
-static float d=0.05; // insert values here...
+//static float d=0.05; // insert values here...
 static float baseThrust=0;
 estimate_t pos;
 float speedZ;
@@ -101,11 +101,19 @@ static void Torque2Thrust(float inputs[Ninputs])
 // must return a pointer
 {
   //predefine b,d,k
-thrusts[0] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[1] = -1/(4*b)*inputs[0] -1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
-thrusts[2] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] -1.4142/(4*b*d)*inputs[2] +1/(4*k)*inputs[3];
-thrusts[3] = -1/(4*b)*inputs[0] +1.4142/(4*b*d)*inputs[1] +1.4142/(4*b*d)*inputs[2] -1/(4*k)*inputs[3];
+  //inputs[0]=0;
+  //inputs[1]=0;
+  //inputs[2]=0;
+  thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   +9.0909*inputs[3];
+  thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   -9.0909*inputs[3];
+  thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +9.0909*inputs[3];
+  thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -9.0909*inputs[3];
 
+  int i;
+  for (i=0;i<Ninputs;i++)
+  {
+    thrusts[i]= -7.340774733578*thrusts[i]*thrusts[i] + 1463.694146189835*thrusts[i] + 1135.702896436404;
+  }
 }
 
 static void controllerTask(void* param)
@@ -138,14 +146,16 @@ static void controllerTask(void* param)
 
       sensfusion6UpdateQ(gyro.x, gyro.y, gyro.z, acc.x, acc.y, acc.z, ATTITUDE_UPDATE_DT);
       sensfusion6GetEulerRPY(&eulerRollActual_s, &eulerPitchActual_s, &eulerYawActual_s);
-      positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
-      positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
-      velocityEstimateZ(&x[6]); //x6 = dotZ?
-      x[7]=pos.position.z;
+      //positionUpdateVelocity(sensfusion6GetAccZWithoutGravity(acc.x,acc.y,acc.z), 1/IMU_UPDATE_FREQ);
+      //positionEstimate(&pos, (float)(0), 1/IMU_UPDATE_FREQ);
+      //velocityEstimateZ(&x[6]); //x6 = dotZ?
+      //x[7]=pos.position.z;
+      x[6]=0;
+      x[7]=0;
 
       x[0]=eulerRollActual_s;
       x[1]=eulerPitchActual_s;
-      x[2]=eulerYawActual_s;
+      x[2]=-eulerYawActual_s; //  DEBUG
       x[3]=gyro.x;
       x[4]=-gyro.y;
       x[5]=-gyro.z;
@@ -169,6 +179,11 @@ static void controllerTask(void* param)
         }
       }
 
+      if (x[2] > 180.0)
+        x[2] -=360.0;
+      else if (x[2] < -180.0)
+        x[2] +=360.0;
+      baseThrust = ref_generatorExtIn(ref);
       // Calculate input (T,tx,ty,tz)
       float xxi[2*Nstates] = {x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],xi[0],xi[1],xi[2],xi[3],xi[4],xi[5],xi[6],xi[7]};
       ctrlCalc(xxi); // Do not redefine...
@@ -267,8 +282,8 @@ LOG_ADD(LOG_FLOAT, u4, &u_k[3])
 LOG_GROUP_STOP(thrusts_s)
 
 PARAM_GROUP_START(controllerr)
-PARAM_ADD(PARAM_FLOAT, b, &b)
-PARAM_ADD(PARAM_FLOAT, k, &k)
+//PARAM_ADD(PARAM_FLOAT, b, &b)
+//PARAM_ADD(PARAM_FLOAT, k, &k)
 PARAM_ADD(PARAM_FLOAT, base_thrust, &baseThrust)
 PARAM_ADD(PARAM_INT16, resInt, &reset_I)
 PARAM_GROUP_STOP(controllerr)

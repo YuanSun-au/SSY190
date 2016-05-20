@@ -20,9 +20,13 @@ OUT: reference to controller
 #include "log.h"
 #include "debug.h"
 
+#define ANGLE 20;
+//#define Z_SPEED 10;
+
 static bool isInit;
 extern QueueHandle_t xQueue2;
 int* FREQ;
+
 
 // euler angles from sensorFusion
 //static float eulerRollActual;
@@ -65,6 +69,45 @@ static void ref_generatorTask(void* param)
       }
 }
 
+// static float ref_generatorSetAngle (float value)
+// {
+// // returns an angle of +1 degree or -1 degree, if the commander input is positive, respectively negative
+//   if (value < -10) {
+//     return -ANGLE;
+//   }
+//   else if (value > 10) {
+//     return ANGLE;
+//   }
+//   else {
+//     return 0;
+//   }
+// }
+
+// static float ref_generatorSetZ (uint16_t thrust)
+// {
+// // returns a speed in Z of +0.05 or -0.05 if the commander input is positive, repectively negative
+//   if (thrust < -5) {
+//     return -Z_SPEED;
+//   }
+//   else if (thrust > 5) {
+//     return Z_SPEED;
+//   }
+//   else {
+//     return 0;
+//   }
+// }
+
+
+static float ref_generatorSetZThrust (uint16_t thrust)
+{
+  if (thrust > 0) {
+    return (float) thrust*0.8;
+  }
+  else {
+    return 0;
+  }
+}
+
 void ref_generatorInit(void)
 {
   if(isInit)
@@ -82,6 +125,27 @@ void ref_generatorInit(void)
 bool ref_generatorTest(void)
 {
   return true;
+}
+
+
+float ref_generatorExtIn (float* xRef)
+{
+  float rollRef, pitchRef, yawRef;
+  uint16_t thrust;
+
+  commanderGetRPY (&rollRef, &pitchRef, &yawRef);
+  commanderGetThrust (&thrust);
+
+  xRef[0]=rollRef;  //ref_generatorSetAngle(rollRef);
+  xRef[1]=pitchRef; //ref_generatorSetAngle(pitchRef);
+  //xRef[2]=90; // yaw always zero  --> might still be changed if desired
+  //xRef[3]=0; // we might not need these since they always are 0
+  //xRef[4]=0;
+  //xRef[5]=0;
+  //xRef[6]=0;//ref_generatorSetZ(thrust);
+  //xRef[7]=0;//ref_generatorSetZ(thrust);
+
+  return ref_generatorSetZThrust(thrust);
 }
 
 /* Loggable variables */
