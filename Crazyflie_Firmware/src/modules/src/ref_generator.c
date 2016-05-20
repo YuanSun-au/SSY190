@@ -136,8 +136,8 @@ float ref_generatorExtIn (float* xRef)
   commanderGetRPY (&rollRef, &pitchRef, &yawRef);
   commanderGetThrust (&thrust);
 
-  xRef[0]=rollRef;  //ref_generatorSetAngle(rollRef);
-  xRef[1]=pitchRef; //ref_generatorSetAngle(pitchRef);
+  xRef[0]=rollRef*1.3;  //ref_generatorSetAngle(rollRef);
+  xRef[1]=pitchRef*1.3; //ref_generatorSetAngle(pitchRef);
   //xRef[2]=90; // yaw always zero  --> might still be changed if desired
   //xRef[3]=0; // we might not need these since they always are 0
   //xRef[4]=0;
