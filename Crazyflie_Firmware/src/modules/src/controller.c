@@ -135,7 +135,7 @@ static void controllerTask(void* param)
 
     imu9Read(&gyro, &acc, &mag);
 
-    //xQueueReceive( xQueue1, &(ref),( TickType_t ) 1 );
+    xQueueReceive( xQueue1, &(reset_I),( TickType_t ) 1 );
 
     if( imu6IsCalibrated() )
     { // if/else needed?
@@ -165,6 +165,8 @@ static void controllerTask(void* param)
       float limPos = 1000;
       float limNeg = -1000;
       int i;
+
+
       for(i=0;i<2;i++)
       {
         xi[i]+=ref[i]-x[i];
@@ -184,7 +186,7 @@ static void controllerTask(void* param)
         x[2] -=360.0;
       else if (x[2] < -180.0)
         x[2] +=360.0;
-      //baseThrust = ref_generatorExtIn(ref);
+      baseThrust = ref_generatorExtIn(ref);
       // Calculate input (T,tx,ty,tz)
       float xxi[2*Nstates] = {x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],xi[0],xi[1],xi[2],xi[3],xi[4],xi[5],xi[6],xi[7]};
       ctrlCalc(xxi); // Do not redefine...

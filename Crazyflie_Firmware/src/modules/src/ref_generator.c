@@ -19,16 +19,16 @@ OUT: reference to controller
 #include "ref_generator.h"
 #include "log.h"
 #include "debug.h"
-#include "param.h"
+//#include "param.h"
 
 //#define ANGLE 20;
-
 //#define Z_SPEED 10;
+#define THRUST_M 0.808715820312500
 
 static bool isInit;
 extern QueueHandle_t xQueue2;
 int* FREQ;
-static float thrustM = 0.8;
+//static float thrustM = 0.808715820312500;
 
 
 // euler angles from sensorFusion
@@ -104,7 +104,7 @@ static void ref_generatorTask(void* param)
 static float ref_generatorSetZThrust (uint16_t thrust)
 {
   if (thrust > 0) {
-    return (float) thrust*thrustM;
+    return (float) thrust*THRUST_M;
   }
   else {
     return 0;
@@ -148,7 +148,7 @@ float ref_generatorExtIn (float* xRef)
   //xRef[6]=0;//ref_generatorSetZ(thrust);
   //xRef[7]=0;//ref_generatorSetZ(thrust);
 
-  return 0;//ref_generatorSetZThrust(thrust);
+  return ref_generatorSetZThrust(thrust);
 }
 
 /* Loggable variables */
@@ -156,6 +156,6 @@ LOG_GROUP_START(ref)
 LOG_ADD(LOG_INT8, ref_freq, &FREQ)
 LOG_GROUP_STOP(ref)
 
-PARAM_GROUP_START(multiplicator)
-PARAM_ADD(PARAM_FLOAT, thrustMult, &thrustM)
-PARAM_GROUP_STOP(multiplicator)
+//PARAM_GROUP_START(multiplicator)
+//PARAM_ADD(PARAM_FLOAT, thrustMult, &thrustM)
+//PARAM_GROUP_STOP(multiplicator)

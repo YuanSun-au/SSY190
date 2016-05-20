@@ -9,6 +9,7 @@ or STOP (controller off)
 #include "mode_switcher.h"
 #include "queue.h"
 #include "debug.h"
+#include "param.h"
 
 #define Nstates 8
 
@@ -18,8 +19,8 @@ float ref_mode[Nstates] = {0,0,0,0,0,0,0,0};
 extern QueueHandle_t xQueue1;
 float* float_ref_pnt;
 extern QueueHandle_t xQueue2;
-int FREQ;
-int* pnt;
+uint16_t integ;
+uint16_t* pnt_integ;
 
 static int toggle(int var){
   return var?0:1;
@@ -40,22 +41,10 @@ static void mode_switcherTask(void* param)
   {
     vTaskDelayUntil(&lastWakeTime, F2T(1)); // 500Hz
 
-    // Get reference (from where?)
-
-    // cretate a smooth trajectory for the reference (maybe a derivative?)
-
-    // Tell controller we have a new reference (if we have? do we need to?)
-
-    // Testing
-    //DEBUG_PRINT("--MODE_SW\n");
-    FREQ = status?10:5;
-    status = toggle(status);
-    pnt = &FREQ;
-    float_ref_pnt = ref_mode;
-    xQueueSend( xQueue1,( void * ) &float_ref_pnt, ( TickType_t ) 1000 );
+    xQueueSend( xQueue1,( void * ) pnt_integ, ( TickType_t ) 1000 );
     //xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
-      }
     }
+  }
 
 void mode_switcherInit(void)
 {
@@ -75,3 +64,7 @@ bool mode_switcherTest(void)
 {
   return true;
 }
+
+PARAM_GROUP_START(mode)
+PARAM_ADD(PARAM_UINT16, integrator, &integ)
+PARAM_GROUP_STOP(mode)
