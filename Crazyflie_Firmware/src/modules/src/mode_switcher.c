@@ -68,5 +68,5 @@ bool mode_switcherTest(void)
 }
 
 PARAM_GROUP_START(mode)
-PARAM_ADD(PARAM_UINT16, integrator, &integ)
+PARAM_ADD(PARAM_UINT16, integrator, &no_integ)
 PARAM_GROUP_STOP(mode)
