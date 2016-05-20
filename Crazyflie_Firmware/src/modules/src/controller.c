@@ -46,7 +46,7 @@ static float K[Ninputs][2*Nstates] =
   {0.0034805389,0.0000000000,-0.0000000000,0.0034944611,0.0000000000,-0.0000000000,0,0,0,0,0,0},
   {0.0000000000,0.0035828343,-0.0000000000,0.0000000000,0.0035971657,-0.0000000000,0,0,0,0,0,0},
   {-0.0000000000,-0.0000000000,0.0000000153,-0.0000000000,-0.0000000000,0.0054325000,0,0,0,0,0,0},
-}
+};
 
 
 
@@ -168,7 +168,7 @@ static void controllerTask(void* param)
 
     imu9Read(&gyro, &acc, &mag);
 
-    xQueueReceive( xQueue1, (reset_I),( TickType_t ) 1 );
+    xQueueReceive( xQueue1, &(reset_I),( TickType_t ) 1 );
 
     if( imu6IsCalibrated() )
     { // if/else needed?
