@@ -32,7 +32,7 @@ OUT: motor power
 #define Nstates 6
 #define Ninputs 4
 
-#define MIN_THRUST 1000
+#define MIN_THRUST 0
 
 #define LIMPOS 1000
 #define LIMNEG -1000
