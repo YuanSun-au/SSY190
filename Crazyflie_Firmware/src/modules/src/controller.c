@@ -55,21 +55,17 @@ static float Ki[Ninputs][2*Nstates] =
   {-0.00000,0.0039269159,-0.000000000,0.00000000,0.0035978396,0.0000000000,0.0000000000,-0.0001398330,-0.0000000000,-0.0000011098,0.0000028892,-0.0000000007},
   {0.0000,0.000000,0.0000003158,-0.0000000,-0.000000000,0.0054345605,-0.0000000000,-0.0000000000,-0.000000000,0.0000294063,0.0000001820,-0.0005149592},
 };
-//static float b=0.0001;
-//static float k=0.00000275;
-//static float b=1; // insert values here...
-//static float k=1; // insert values here...
-//static float d=0.05; // insert values here...
+
 static float baseThrust=0;
-estimate_t pos;
-float speedZ;
+// estimate_t pos;
+// float speedZ;
 static float eulerRollActual_s;   // Measured roll angle in deg
 static float eulerPitchActual_s;  // Measured pitch angle in deg
 static float eulerYawActual_s;    // Measured yaw angle in deg
 
 static bool isInit;
 extern QueueHandle_t xQueue1;
-int* REF;
+// int* REF;
 static uint16_t reset_I=0;
 uint16_t *pnt_reset_I;
 
@@ -83,7 +79,7 @@ static Axis3f mag;  // Magnetometer axis data in testla
 
 float u[Ninputs];
 float x[Nstates] = {0,0,0,0,0,0};
-float ref[Nstates] = {0,0,0,0,0,0,0,0,0,0,0,0};
+float ref[2*Nstates] = {0,0,0,0,0,0,0,0,0,0,0,0};
 float xi[Nstates] = {0,0,0,0,0,0};
 static float u_k[Ninputs];
 static float thrusts[Ninputs];
@@ -98,10 +94,10 @@ static uint16_t limitThrust(int32_t value)
 static void integratorCalc(void)
 {
   int i;
-  for(i=0;i<2;i++)
+  for(i=0;i<2;i++)    // we only use the integrator on the roll and pitch angles
   {
     xi[i]+=ref[i]-x[i];
-    if(reset_I)
+    if(reset_I)     // reset integrator state if we are in the other mode
       xi[i]=0;
 
     if(xi[i]>LIM_POS)
@@ -124,7 +120,7 @@ static void ctrlCalc(float states[2*Nstates])
   {
     int j;
     u_k[i]=0;
-    for(j=0;j<2*Nstates;j++)
+    for(j=0;j<2*Nstates;j++) // we only use the integrator on the roll and pitch angles
     {
       if (reset_I)  // no integrator
         u_k[i]=u_k[i]+K[i][j]*(ref[j]-states[j]);
@@ -135,18 +131,26 @@ static void ctrlCalc(float states[2*Nstates])
 }
 
 static void Torque2Thrust(float inputs[Ninputs])
-// must return a pointer
 {
+  // distributes the torques onto the motors
   thrusts[0] = -0.2500*inputs[0]   -7.0711*inputs[1]   +7.0711*inputs[2]   +9.0909*inputs[3];
   thrusts[1] = -0.2500*inputs[0]   -7.0711*inputs[1]   -7.0711*inputs[2]   -9.0909*inputs[3];
   thrusts[2] = -0.2500*inputs[0]   +7.0711*inputs[1]   -7.0711*inputs[2]   +9.0909*inputs[3];
   thrusts[3] = -0.2500*inputs[0]   +7.0711*inputs[1]   +7.0711*inputs[2]   -9.0909*inputs[3];
 
   int i;
-  for (i=0;i<Ninputs;i++)
+  for (i=0;i<Ninputs;i++)   // mapping the torque to the thrust
   {
     thrusts[i]= -7.340774733578*thrusts[i]*thrusts[i] + 1463.694146189835*thrusts[i] + 1135.702896436404;
   }
+}
+
+static void limitYaw (void)
+{
+  if (x[2] > 180.0)
+    x[2] -=360.0;
+  else if (x[2] < -180.0)
+    x[2] +=360.0;
 }
 
 static void controllerTask(void* param)
@@ -154,7 +158,7 @@ static void controllerTask(void* param)
   uint32_t lastWakeTime;
   uint32_t attitudeCounter = 0;
 
-//  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR); // What is this?
+//  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR);
 
   //Wait for the system to be fully started
   systemWaitStart();
@@ -171,10 +175,7 @@ static void controllerTask(void* param)
     reset_I=*pnt_reset_I;
 
     if( imu6IsCalibrated() )
-    { // if/else needed?
-      // Get ref and sensor
-      // ref comes in a queue from ref_generator
-      // todo: make REF into a vector
+    {
       if (++attitudeCounter >= ATTITUDE_UPDATE_RATE_DIVIDER)
       {
 
@@ -192,17 +193,13 @@ static void controllerTask(void* param)
 
       integratorCalc();
 
-      if (x[2] > 180.0)
-        x[2] -=360.0;
-      else if (x[2] < -180.0)
-        x[2] +=360.0;
-      baseThrust = ref_generatorExtIn(ref);
+      limitYaw();
+
+      baseThrust = ref_generatorExtIn(ref);   // gets commander input values (only roll, pitch and thrust)
       // Calculate input (T,tx,ty,tz)
       float xxi[2*Nstates] = {x[0],x[1],x[2],x[3],x[4],x[5],xi[0],xi[1],xi[2],xi[3],xi[4],xi[5]};
 
-      ctrlCalc(xxi); // Do not redefine...
-
-
+      ctrlCalc(xxi); // actual control calculations
 
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);

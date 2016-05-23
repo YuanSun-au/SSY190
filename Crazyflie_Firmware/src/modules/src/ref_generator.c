@@ -1,9 +1,10 @@
 /*
-The reference generator should give a smooth trajectory for the QUAD
-given the wanted reference and the current position
+The reference generator receives the input from the commander and passes on the
+relevant values to the controller
 IN: reference from user,current state
 OUT: reference to controller
 */
+
 // From C
 #include <math.h>
 // From FreeRTOS
@@ -21,15 +22,12 @@ OUT: reference to controller
 #include "debug.h"
 //#include "param.h"
 
-//#define ANGLE 20;
-//#define Z_SPEED 10;
+// multiplicator on the received thrust
 #define THRUST_M 0.808715820312500
 
 static bool isInit;
-extern QueueHandle_t xQueue2;
+//extern QueueHandle_t xQueue2;
 int* FREQ;
-//static float thrustM = 0.808715820312500;
-
 
 // euler angles from sensorFusion
 //static float eulerRollActual;
@@ -44,7 +42,7 @@ static void ref_generatorTask(void* param)
 {
   uint32_t lastWakeTime;
 
-//  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR); // OMG WHAT IS THIS
+//  vTaskSetApplicationTaskTag(0, (void*)TASK_STABILIZER_ID_NBR);
 
   //Wait for the system to be fully started
   systemWaitStart();
@@ -69,7 +67,7 @@ static void ref_generatorTask(void* param)
     //ledSet(CHG_LED,ledstatus);
     //ledstatus = toggle(ledstatus);
 
-      }
+  }
 }
 
 // static float ref_generatorSetAngle (float value)
