@@ -64,7 +64,7 @@ Q=diag([1e4, 1e4, 1e-7,... % r,p,y
 R=diag(1*[1, 1, 1, 1]); % thrust,Tx,Ty,Tz
 K = lqr(sysd,Q,R) % K is the feedback vector
 closed_poles=eig(sysd.a-sysd.b*K)
-[Ki,s,e]=lqi(sysd,[Q,zeros(6);zeros(6),0.09*Q],R);
+[Ki,s,e]=lqi(sysd,[Q,zeros(6);zeros(6),0.009*Q],R);
 %% Kalman design
 % A=zeros(12);
 % A(1:3,4:6)=eye(3);
