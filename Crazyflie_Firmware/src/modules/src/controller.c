@@ -83,7 +83,7 @@ static Axis3f mag;  // Magnetometer axis data in testla
 
 float u[Ninputs];
 float x[Nstates] = {0,0,0,0,0,0};
-float ref[Nstates] = {0,0,0,0,0,0};
+float ref[Nstates] = {0,0,0,0,0,0,0,0,0,0,0,0};
 float xi[Nstates] = {0,0,0,0,0,0};
 static float u_k[Ninputs];
 static float thrusts[Ninputs];
@@ -129,7 +129,7 @@ static void ctrlCalc(float states[2*Nstates])
       if (reset_I)  // no integrator
         u_k[i]=u_k[i]+K[i][j]*(ref[j]-states[j]);
       else          // with integrator
-        u_k[i]=u_k[i] - Ki[i][j]*(states[j]);
+        u_k[i]=u_k[i] + Ki[i][j]*(states[j]);
     }
   }
 }
