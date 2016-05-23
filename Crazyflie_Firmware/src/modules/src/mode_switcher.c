@@ -10,6 +10,7 @@ or STOP (controller off)
 #include "queue.h"
 #include "debug.h"
 #include "param.h"
+#include "ledseq.h"
 
 //#define Nstates 6
 
@@ -25,6 +26,15 @@ uint16_t* pnt_integ;
 //static int toggle(int var){
 //  return var?0:1;
 //}
+
+static void integrator_led (void)
+{
+  if (no_integ)
+    ledSet(LED_BLUE_L,0);
+  else
+    ledSet(LED_BLUE_L,1);
+}
+
 
 static void mode_switcherTask(void* param)
 {
@@ -43,6 +53,7 @@ static void mode_switcherTask(void* param)
 
 
     xQueueSend( xQueue1,( void * ) &pnt_integ, ( TickType_t ) 1000 );
+    integrator_led ();
     //xQueueSend( xQueue2,( void * ) &pnt, ( TickType_t ) 1000 );
     }
   }

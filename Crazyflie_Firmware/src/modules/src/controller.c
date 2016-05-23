@@ -202,6 +202,8 @@ static void controllerTask(void* param)
 
       ctrlCalc(xxi); // Do not redefine...
 
+
+
       // Translate from (T,tx,ty,tz) to motorPowerMi
       Torque2Thrust(u_k);
 
@@ -214,7 +216,6 @@ static void controllerTask(void* param)
       motorsSetRatio(MOTOR_M2, motorPowerM2);
       motorsSetRatio(MOTOR_M3, motorPowerM3);
       motorsSetRatio(MOTOR_M4, motorPowerM4);
-
       // DEBUG
     //  DEBUG_PRINT("Controller debug");
     attitudeCounter = 0;
