@@ -141,12 +141,7 @@ float ref_generatorExtIn (float* xRef)
 
   xRef[0]=rollRef*1.3;  //ref_generatorSetAngle(rollRef);
   xRef[1]=pitchRef*1.3; //ref_generatorSetAngle(pitchRef);
-  //xRef[2]=90; // yaw always zero  --> might still be changed if desired
-  //xRef[3]=0; // we might not need these since they always are 0
-  //xRef[4]=0;
-  //xRef[5]=0;
-  //xRef[6]=0;//ref_generatorSetZ(thrust);
-  //xRef[7]=0;//ref_generatorSetZ(thrust);
+
 
   return ref_generatorSetZThrust(thrust);
 }
@@ -155,7 +150,3 @@ float ref_generatorExtIn (float* xRef)
 LOG_GROUP_START(ref)
 LOG_ADD(LOG_INT8, ref_freq, &FREQ)
 LOG_GROUP_STOP(ref)
-
-//PARAM_GROUP_START(multiplicator)
-//PARAM_ADD(PARAM_FLOAT, thrustMult, &thrustM)
-//PARAM_GROUP_STOP(multiplicator)

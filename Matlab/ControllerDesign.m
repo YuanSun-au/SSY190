@@ -123,4 +123,15 @@ for n=1:length(K(:,1))
 end
 fclose(K_c);
 
+Ki_c=fopen('feedback_ci.txt','w');
+for n=1:length(Ki(:,1))
+    fprintf(Ki_c,'{');
+    fprintf(Ki_c,'%10.10f',Ki(n,1));
+    for i=Ki(n,2:end)
+        fprintf(Ki_c,',%10.10f',i);
+    end
+    fprintf(Ki_c,'},\n');
+end
+fclose(Ki_c);
+
 K;

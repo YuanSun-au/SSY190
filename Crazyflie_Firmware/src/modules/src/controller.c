@@ -124,7 +124,7 @@ static void ctrlCalc(float states[2*Nstates])
   {
     int j;
     u_k[i]=0;
-    for(j=0;j<1*Nstates;j++)
+    for(j=0;j<2*Nstates;j++)
     {
       if (reset_I)  // no integrator
         u_k[i]=u_k[i]+K[i][j]*(ref[j]-states[j]);
